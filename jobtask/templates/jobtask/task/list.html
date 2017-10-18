@@ -1,0 +1,255 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% load pagetags %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+
+{% block body%}
+    
+<div class="container-fluid">
+
+	<form action="" method="get">
+	<div class="row query-row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<div class="container-fluid form">
+
+				<div class="row"> <!-- row begin -->
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="search" class="control-label required-field ">
+			                	搜索
+			            	</label>
+							<input id="search" class="js-states form-control" value="{{ search }}" required name="search"  />
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="btn_search" class="control-label required-field ">&nbsp;
+			            	</label>
+			            	<div class="">
+			           	    	<input id="btn_search"  class="btn btn-success" type="submit" value="过滤" />
+			            	</div>
+							
+						</div>
+					</div>
+				</div> <!-- row  end-->
+			</div>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	</form>
+	
+	<div class="row header-row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<div class="container-fluid" style="padding: 0px; margin: 0px;">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="datatable-desc">
+							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">任务信息表</span>
+						</div>
+					</div>
+					<div class="col-md-6"></div>
+					<div class="col-md-2">
+					</div>
+				</div> <!-- row -->
+				<hr />
+			</div><!-- container -->
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	
+	<div class="row datatable-row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+
+				{% if dataset %}  
+				    <table class="table tablesorter-dropbox">  
+				        <thead>  
+				            <th>任务号</th>
+				            <th>任务定义</th>
+				            <th>执行用户</th>
+				            <th>参数</th>
+				            <th>主机列表</th>
+				            <th>超时时间</th>
+				            <th>发起IP</th>
+				            <th>任务状态</th>
+				            <th>创建时间</th>  
+				            <th>最后更新时间</th>
+				            <th>创建用户</th> 
+				            <th>状态</th>  
+				        </thead>
+				    {%for rec in dataset %}  
+				        <tr class="tb_row">  
+				            <td>
+				            	<a href="{% url 'jobtask:task-detail'  rec.id  rec.taskid %}">{{ rec.taskid }}</a>
+				            </td>  
+				            <td>{{ rec.taskdef }}</td>
+				     		<td>{{ rec.exe_user }}</td>
+				            <td>{{ rec.params }}</td>
+				            <td>{{ rec.iphosts }}</td>
+				            <td>{{ rec.timeout }}</td>
+				            <td>{{ rec.fromip }}</td>
+				            <td>{{ rec.task_status }}</td>
+				            <td>{{ rec.create_dt }}</td>
+				            <td>{{ rec.update_dt}}</td> 
+				            <td>{{ rec.create_user}}</td>  
+				            <td>{{ rec.job_status}}</td>  
+				        </tr>  
+				    {% endfor%}  
+				    </table>  
+				{% else %}  
+				<p>No Data !!!</p>  
+				{% endif %}  
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	
+	<div class="row page-row" style="padding: 0px; margin: 0px;">
+		<div class="col-md-1"></div>
+		<div class="col-md-10"  style="padding: 0px; margin: 0px;">
+				{% if is_paginated %}  
+		        <div class="panel-default"  style="align: right">
+	                <ul class="pagination">
+	                    <li><a href="{{ request.path }}?page=1&{{ querystr }}">&laquo;</a></li>
+	                    {% if page_obj.has_previous %}
+	                        <li><a href="{{ request.path }}?&page={{ page_obj.previous_page_number }}&{{ querystr }}">上一页</a></li>
+	                    {% else %}
+	                        <li class="previous disabled"><a>上一页</a></li>
+	                    {% endif %}
+<!-- 	                    {% for i in page_obj.paginator.page_range %}
+	                        <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&{{ querystr }}">{{ i }}</a></li>
+	                    {% endfor %} -->
+	                    {% for i in page_obj|page_range:8 %}
+	                        <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&{{ querystr }}">{{ i }}</a></li>
+	                    {% endfor %}
+	                    {% if page_obj.has_next %}
+	                        <li><a href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{ querystr }}">下一页</a></li>
+	                    {% else %}
+	                        <li class="previous disabled"><a>下一页</a></li>
+	                    {% endif %}
+	                    <li><a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&{{ querystr }}">&raquo;</a></li>
+	                </ul>
+	        </div>
+			 {%endif%}  
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	
+
+</div>
+
+
+<div id="commtask_modal" class="modal fade  " tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">任务详细信息</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+          	<div class="content"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="runjob" class="modal fade  " tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">作业提示</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+          	<div class="content">
+          		作业已创建，可点击查看：<a href="" target="blank"></a>
+          	</div>
+          	<div class="errmsg"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+{% endblock %}
+
+{% block js_extend %}
+	<script src="{% static 'jquery/plugins/tablesort/js/jquery.tablesorter.min.js' %}"></script>
+	<script src="{% static 'jquery/plugins/jquery.ui.min.js' %}"></script>
+	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
+	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
+	<script src="{% static 'util.js' %}"></script>
+	<script src="{% static 'django/csrf.js' %}"></script>
+	<script src="{% static 'jquery_util.js' %}"></script>
+	<script>
+	$(function(){
+
+		$("#commtask_modal,#runjob").draggable({   
+		    handle: ".modal-header",   
+		    cursor: 'move',   
+		    refreshPositions: false  
+		});  
+		
+		$('#commtask_modal').on('show.bs.modal', function (event) {
+			  var button = $(event.relatedTarget); // Button that triggered the modal
+			  var cid = button.data('commtask'); // Extract info from data-* attributes
+			  var url = button.data("url");
+			  var modal = $(this);
+			  $.get(url, undefined , function(htmlContent){
+				  modal.find('.modal-body div.content').html(htmlContent);
+				  //modal.modal('toggle');  // 触发弹出
+				});
+			  //modal.find('.modal-body input').val(recipient)
+			});
+			
+		$('#runjob').on('show.bs.modal', function (event) {
+			  var button = $(event.relatedTarget); // Button that triggered the modal
+			  var url = button.data("url");
+			  var modal = $(this);
+			  $.post(url, undefined , function(jsonobj){
+				  var jobid = jsonobj.jobid;
+				  var msg = jsonobj.msg;
+				  var code = jsonobj.code;
+				  var url = jsonobj.url;
+				  if(code==0){
+				  	modal.find('.modal-body div.content a').text(jobid).show();
+				  	modal.find('.modal-body div.content a').attr("href", url);
+				  }else{
+					modal.find('.modal-body div.content').hide();
+					modal.find('.modal-body div.errmsg').html(msg);
+				  }
+				});
+			});
+		
+		$('table').tablesorter({
+			widgets        : ['zebra', 'columns'],
+			usNumberFormat : false,
+			sortReset      : true,
+			sortRestart    : true
+		});
+		
+	});
+	</script>
+
+{% endblock %}
+

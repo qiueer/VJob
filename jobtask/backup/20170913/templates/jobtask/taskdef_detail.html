@@ -1,0 +1,147 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% load extratags %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+
+{% block body%}
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<div class="container-fluid">
+				<form action="{%url 'jobtask:taskdef-action' %}" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<div class="row">
+						{% for fd in fields %}
+						
+							{% ifequal fd|is_auto_field 1 %}
+								<div class="col-md-4" style="display: none">
+									<input type="hidden" name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"  {{fd|get_html_attr|safe }} maxlength="16" value="{{ object|get_attr_from_m:fd.name }}" />
+								</div>
+							{% endifequal %}
+							
+							{% ifequal fd|is_input_field 1 %}
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="id_{{ fd.name }}" class="control-label required-field ">
+							                {{ fd.verbose_name }}
+							            </label>
+							            <div class="">
+											<input type="text" name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"  {{fd|get_html_attr|safe }} maxlength="16" value="{{ object|get_attr_from_m:fd.name }}" />
+											<!--  <select name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control" {{fd|get_html_attr|safe }} maxlength="16" val="{{ object|get_attr_from_m:fd.name }}" /></select> -->
+										</div>
+									</div>
+								</div>
+							{% endifequal %}
+								
+							{% ifequal fd|is_datetime_field 1 %}
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="id_{{ fd.name }}" class="control-label required-field ">
+							                {{ fd.verbose_name }}
+							            </label>
+							            <div class="">
+											<input type="text" name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"  {{fd|get_html_attr|safe }}  maxlength="16" value="{{ object|get_attr_from_m:fd.name }}" />
+											<!--  <select name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control" maxlength="16" val="{{ object|get_attr_from_m:fd.name }}" /></select> -->
+										</div>
+									</div>
+								</div>
+							{% endifequal %}
+							
+							{% ifequal fd|is_file_field 1 %}
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="id_{{ fd.name }}" class="control-label required-field ">
+							                {{ fd.verbose_name }}
+							            </label>
+							            <div class="">
+							            	<div>当前：<a href="{{ object|get_attr_from_m:fd.name }}"  {{fd|get_html_attr|safe }} >{{ object|get_attr_from_m:fd.name }}</a></div>
+							            	<div>
+											修改：<input type="file" name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"  {{fd|get_html_attr|safe }} value="{{ object|get_attr_from_m:fd.name }}" />
+											</div>
+											<!--  <select name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"  {{fd|get_html_attr }} maxlength="16" val="{{ object|get_attr_from_m:fd.name }}" /></select> -->
+										</div>
+									</div>
+								</div>
+							{% endifequal %}
+							
+							{% ifequal fd|is_textarea_field 1 %}
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="id_{{ fd.name }}" class="control-label required-field ">
+							                {{ fd.verbose_name }}
+							            </label>
+							            <div class="">
+							            	<textarea rows="1" name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"   {{fd|get_html_attr|safe }}  >{{ object|get_attr_from_m:fd.name }}</textarea>
+											<!--  <input type="text" name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"  {{fd|get_html_attr|safe }} maxlength="16" value="{{ object|get_attr_from_m:fd.name }}" /> -->
+											<!--  <select name="{{fd.name}}" id="id_{{fd.name}}" class=" form-control"  {{fd|get_html_attr|safe }} val="{{ object|get_attr_from_m:fd.name }}" /></select> -->
+										</div>
+									</div>
+								</div>
+							{% endifequal %}
+						{% endfor %}
+						
+					</div> <!--  end row -->
+					<div class="row">
+						<div class="col-md-4">
+							<a class="btn btn-danger btn-delete" action="delete" type="submit" value="Del">Delete</a>
+						</div>
+						<div class="col-md-4">
+							<a class="btn btn-success btn-update" action="update" type="submit" value="Update">Update</a>
+						</div>
+						<div class="col-md-4">
+							<a class="btn btn-success btn-clone" action="clone" type="submit" value="Clone" >Clone</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+</div>
+
+{% endblock %}
+
+
+{% block js_extend %}
+	<script src="{% static 'django/csrf.js' %}"></script>
+	<script src="{% static '/static/jquery_util.js' %}"></script>
+
+	<script>
+	/*
+	    $(".btn-update, .btn-clone, .btn-delete").click(function(){
+	    	var action = $(this).attr("action");
+	    	var tmpInput="<input type='hidden' name='__action' value='#ACTION'/>";
+	    	tmpInput = tmpInput.replace("#ACTION", action);
+	    	$("form").append(tmpInput);
+	    	$("form").submit();
+	    });
+	*/
+/* 		var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+		alert(csrftoken); */
+
+	    $(".btn-update, .btn-clone, .btn-delete").click(function(){
+	    	var action = $(this).attr("action");
+	    	var post_data = get_input_map("form");
+	    	/*
+	    	// for django csrf
+			var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+			post_data["csrfmiddlewaretoken"] = csrftoken;
+			*/
+	    	post_data["__action"] = action;
+	    	console.info(post_data);
+	    	load_ajax_data($("form").attr("action"), post_data, function(json){
+	    		console.info(json);
+	    	});
+	    });
+	    
+	</script>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %} 默认标题 {% endblock %}</title>
+    
+    <!-- Bootstrap -->
+    <link href="{% static 'bootstrap-3.3.7/css/bootstrap.min.css' %}" rel="stylesheet">
+    
+    {% block css_extend %}{% endblock %}
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="{% static 'plugins/html5shiv/3.7.3/html5shiv.min.js' %}"></script>
+      <script src="{% static 'respond.js/1.4.2/respond.min.js' %}"></script>
+    <![endif]-->
+  </head>
+
+	<body>
+		{% block body %} 默认body {% endblock %}
+		
+	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	    <script src="{% static 'jquery/1.12.4/jquery.min.js' %}"></script>
+	    <!-- Include all compiled plugins (below), or include individual files as needed -->
+	    <script src="{% static 'static/bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+	    
+	    {% block js_extend %}{% endblock %}
+  </body>
+</html>

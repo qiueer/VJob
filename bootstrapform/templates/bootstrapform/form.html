@@ -1,0 +1,32 @@
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			{% if form.non_field_errors %}
+			    <div class="alert alert-danger">
+			        <a class="close" data-dismiss="alert">&times;</a>
+			        {% for non_field_error in form.non_field_errors %}
+			             {{ non_field_error }}
+			        {% endfor %}
+			    </div>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			{% for field in form.hidden_fields %}
+			    {{ field }}
+			{% endfor %}
+		</div>
+	</div>
+
+	<div class="row">
+		{% for field in form.visible_fields %}
+			<div class="col-md-{{cols}} {{field.name}}_field">
+		    	{% include 'bootstrapform/field.html' %}
+		    </div>
+		{% endfor %}
+	</div>
+</div>
+

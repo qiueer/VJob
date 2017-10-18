@@ -1,0 +1,64 @@
+
+<div class="contain-fluid">
+
+	<div class="row">
+			<div class="col-md-12 alert-success">
+				<table class="table">
+					<thead>
+						<th>作业号</th>
+						<th>作业状态</th>
+						<th>作业创建时间</th>
+						<th>作业Owner
+					</thead>
+					<tr>
+						<td>{{object.jobid}} </td>
+						<td>{{ object.job_status }} </td>
+						<td>{{ object.create_dt }}</td>
+						<td>{{ object.create_user }}</td>
+					</tr>
+				</table>
+			</div>
+	</div>
+	
+	<div class="row" style="margin: 0 0 18px 0;"></div>
+	
+	<div class="row">
+			<div class="col-md-12">
+				{% if object.job_tasks %}  
+				    <table class="table tablesorter-dropbox">  
+				        <thead> 
+							<th>作业任务功能</th>  
+				            <th>执行用户</th> 
+				            <th>参数</th>  
+				            <th>IPHOSTS</th>
+				            <th>超时时间</th>  
+				            <th>来源IP</th>  
+				            <th>创建用户</th> 
+				            <th>创建时间</th> 
+				            <th>作业任务状态</th>  
+				            <th>操作</th>
+				        </thead>
+				    {%for rec in object.job_tasks.all %}  
+				        <tr class="tb_row">  
+				        	<td>{{ rec.jobdef.func}}</td>  
+				            <td>{{ rec.exe_user}}</td>  
+				            <td>{{ rec.params}}</td> 
+				            <td>{{ rec.iphosts}}</td>  
+				            <td>{{ rec.timeout}}</td>  
+				            <td>{{ rec.fromip}}</td>  
+				            <td>{{ rec.create_user}}</td>
+				            <td>{{ rec.create_dt}}</td>
+				            <td>{{ rec.job_task_status}}</td>
+				            <td>
+				            	<a class="btn btn-info view-jobtask-detail" title="查看(id: {{rec.id}})详细信息" data-url="{% url 'jobtask:jobtask-detail' rec.id object.id object.jobid %}" href="#">查看子任务</a>
+				            </td>
+				        </tr>  
+				    {% endfor%}  
+				    </table>  
+				{% else %}  
+				<p>No Data !!!</p>  
+				{% endif %}  
+			</div>
+	</div>
+</div>
+

@@ -1,0 +1,59 @@
+{% extends "base/base.html" %}
+
+{% load bootstrap_tags %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block body%}
+	<div class="contain-fluid">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="dropz" style="height: 50px; border: 1px solid red; font-size: 30px; text-align: center; cursor:pointer" >
+					Drop files here or Click to upload
+				</div>
+			</div>
+			<div class="col-md-3"></div>
+		</div>
+		<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<form action="{% url 'jobtask:taskdef-add' %}" method="post" enctype="multipart/form-data">
+					    {% csrf_token %}
+					    {{ form|as_bootstrap  }}
+					    <input type="submit" value="Submit" />
+					</form>
+				</div>
+				<div class="col-md-3"></div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block js_extend %}
+	<script src="/static/plugins/dropzone/dropzone.js"></script>
+	<script>
+	    $("#id_file").dropzone({
+	        url: "handle-upload.php",
+	        addRemoveLinks: true,
+	        dictRemoveLinks: "x",
+	        dictCancelUpload: "x",
+	        maxFiles: 1, // 一个文件
+	        maxFilesize: 20, // 20M
+	        acceptedFiles: ".js,.pl,.bat,.py,.sh,.tar.gz,.zip",
+	        init: function() {
+	            this.on("success", function(file) {
+	                console.log("File " + file.name + "uploaded");
+	            });
+	            this.on("removedfile", function(file) {
+	                console.log("File " + file.name + "removed");
+	            });
+	        }
+	    });
+	</script>
+
+{% endblock %}
+
+

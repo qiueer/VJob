@@ -1,0 +1,60 @@
+
+<div class="contain-fluid">
+
+	<div class="row">
+			<div class="col-md-12 alert-success">
+				<table class="table">
+					<tr>
+						<th>文件位置</th>
+						<th>文件路径</th>
+						<th>主执行程序</th>
+						<th>参数</th>
+						<th>解析器</th>
+						<th>执行用户</th>
+						<th>主机/IP</th>
+						<th>任务状态</th>
+					</tr>
+					<tr>
+						<td>{{object.file_loc}} </td>
+						<td>{{ object.file }} </td>
+						<td>{{ object.main_script_name }}</td>
+						<td>{{ object.params }}</td>
+						<td>{{ object.executor }}</td>
+						<td>{{ object.exe_user }}</td>
+						<td>{{ object.iphost }}</td>
+						<td>{{ object.main_script_name }}</td>
+						<td>{{ object.task_status }}</td>
+					</tr>
+				</table>
+			</div>
+	</div>
+	
+	<div class="row" style="margin: 0 0 18px 0; "></div>
+	<div class="row">
+		<div class="col-md-12">
+			<ul id="qiueerTab" class="nav nav-tabs" style="padding: 0px; margin: 0px; /**height: 200px**/">
+				<li class="active">
+					<a href="#stdout" data-toggle="tab">
+						 执行结果（标准输出）
+					</a>
+				</li>
+				<li><a href="#stderr" data-toggle="tab">执行结果（标准错误输出）</a></li>
+			</ul>
+			<div id="myTabContent" class="tab-content">
+				<div class="tab-pane fade in active" id="stdout">
+					<p>{% if object.stdout %}{{object.stdout}}{% endif %}</p>
+				</div>
+				<div class="tab-pane fade" id="stderr">
+					<p>{% if object.stderr %}{{object.stderr}}{% endif %}</p>
+				</div>
+			</div>
+		
+		</div>
+	</div>
+	
+
+    
+	
+
+</div>
+

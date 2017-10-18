@@ -1,0 +1,58 @@
+
+<div class="contain-fluid">
+
+	<div class="row">
+			<div class="col-md-12 alert-success">
+				<table class="table">
+					<thead>
+						<th>任务号</th>
+						<th>任务状态</th>
+						<th>创建时间</th>
+						<th>Owner</th>
+					</thead>
+					<tr>
+						<td>{{object.taskid}} </td>
+						<td>{{ object.task_status }} </td>
+						<td>{{ object.create_dt }}</td>
+						<td>{{ object.create_user }}</td>
+					</tr>
+				</table>
+			</div>
+	</div>
+	
+	<div class="row" style="margin: 0 0 18px 0;"></div>
+	
+	<div class="row">
+			<div class="col-md-12">
+				{% if object.subtasks %}  
+				    <table class="table tablesorter-dropbox">  
+				        <thead> 
+							<th>文件位置</th>  
+							<th>文件路径</th>  
+				            <th>执行用户</th> 
+				            <th>参数</th>  
+				            <th>IPHOST</th>
+				            <th>超时时间</th>  
+				            <th>创建时间</th> 
+				            <th>任务状态</th>  
+				        </thead>
+				    {%for rec in object.subtasks.all %}  
+				        <tr class="tb_row">  
+				        	<td>{{ rec.file_loc}}</td>  
+				        	<td>{{ rec.file}}</td>
+				            <td>{{ rec.exe_user}}</td>  
+				            <td>{{ rec.params}}</td>  
+				            <td>{{ rec.iphost}}</td>  
+				            <td>{{ rec.timeout}}</td>  
+				            <td>{{ rec.create_dt}}</td>
+				            <td>{{ rec.task_status}}</td>
+				        </tr>  
+				    {% endfor%}  
+				    </table>  
+				{% else %}  
+				<p>No Data !!!</p>  
+				{% endif %}  
+			</div>
+	</div>
+</div>
+

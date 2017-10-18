@@ -1,0 +1,43 @@
+
+<div class="contain-fluid">
+
+	<div class="row" style="margin: 0 0 18px 0;"></div>
+	
+	<div class="row">
+			<div class="col-md-12">
+				{% if object.job_sub_tasks %}  
+				    <table class="table tablesorter-dropbox">  
+				        <thead>  
+				        	<th>脚本位置</th> 
+				        	<th>路径</th> 
+				            <th>执行用户</th> 
+				            <th>参数</th>  
+				            <th>IPHOSTS</th>
+				            <th>超时时间</th>  
+				            <th>创建用户</th> 
+				            <th>作业任务状态</th>  
+				            <th>操作</th>
+				        </thead>
+				    {%for rec in object.job_sub_tasks.all %}  
+				        <tr class="tb_row">  
+				        	<td>{{ rec.file_loc}}</td>  
+				        	<td>{{ rec.file}}</td>  
+				            <td>{{ rec.exe_user}}</td>  
+				            <td>{{ rec.params}}</td> 
+				            <td>{{ rec.iphost}}</td>  
+				            <td>{{ object.timeout}}</td>  
+				            <td>{{ rec.create_dt}}</td>
+				            <td>{{ rec.job_task_status}}</td>  
+				            <td>
+				            	<a class="btn btn-info" title="查看(id: {{rec.id}})详细信息" href="{% url 'jobtask:jobsubtask-detail' rec.id object.id %}" target="_blank">查看执行情况</a>
+				            </td>
+				        </tr>  
+				    {% endfor%}  
+				    </table>  
+				{% else %}  
+				<p>No Data !!!</p>  
+				{% endif %}  
+			</div>
+	</div>
+</div>
+

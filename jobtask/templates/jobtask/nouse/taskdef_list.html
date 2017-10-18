@@ -1,0 +1,218 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% load pagetags %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+
+{% block body%}
+    
+<div class="container-fluid">
+
+	<form action="" method="get">
+	<div class="row query-row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<div class="container-fluid form">
+				<div class="row"> <!-- row begin -->
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="task_status" class="control-label required-field ">
+			                	状态
+			            	</label>
+							<select id="task_status" class="js-states form-control" val="{{ task_status }}"  name="task_status">
+							</select>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="task_type" class="control-label required-field ">
+			                	类型
+			            	</label>
+							<select id="task_type" class="js-states form-control" val="{{ task_type }}" name="task_type">
+							</select>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="id_task_type_3" class="control-label required-field ">
+			                	权限
+			            	</label>
+							<select id="task_perm" class="js-states form-control" val="{{ task_perm }}" name="task_perm">
+							</select>
+						</div>
+					</div>
+				</div> <!-- row  end-->
+				<div class="row"> <!-- row begin -->
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="file_type" class="control-label required-field ">
+			                	文件类型
+			            	</label>
+							<select id="file_type" class="js-states form-control" val="{{ file_type }}" name="file_type">
+							</select>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="search" class="control-label required-field ">
+			                	搜索
+			            	</label>
+							<input id="search" class="js-states form-control" value="{{ search }}" required name="search"  />
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+			            	<label for="btn_search" class="control-label required-field ">&nbsp;
+			            	</label>
+			            	<div class="">
+			           	    	<input id="btn_search"  class="btn btn-success" type="submit" value="过滤" />
+			            	</div>
+							
+						</div>
+					</div>
+				</div> <!-- row  end-->
+			</div>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	</form>
+	
+	<div class="row header-row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<div class="container-fluid" style="padding: 0px; margin: 0px;">
+				<div class="row">
+					<div class="col-md-4">
+						<div class="datatable-desc">
+							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">任务定义信息表</span>
+						</div>
+					</div>
+					<div class="col-md-6"></div>
+					<div class="col-md-2">
+						<a style="width: 100%" class="btn  btn-success" href="{% url "jobtask:taskdef-add" %}">增加</a>
+					</div>
+				</div> <!-- row -->
+				<hr />
+			</div><!-- container -->
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+
+	
+	<div class="row datatable-row">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+				{% if dataset %}  
+				    <table class="table tablesorter-dropbox">  
+				        <thead>  
+				            <th>文件</th> 
+				            <th>主文件名</th>  
+				            <th>默认参数</th>  
+				            <th>解析器</th>
+				            <th>创建者</th>  
+				            <th>任务类型</th>  
+				            <th>任务权限状态</th>  
+				            <th>创建时间</th> 
+				            <th>功能说明</th>
+				            <th>操作</th>
+				        </thead>  
+				    {%for rec in dataset %}  
+				        <tr class="tb_row">  
+				            <td>{{ rec.file}}</td>  
+				            <td>{{ rec.main_script_name}}</td> 
+				            <td>{{ rec.params}}</td>  
+				            <td>{{ rec.executor}}</td>  
+				            <td>{{ rec.create_user}}</td>  
+				            <td>{{ rec.task_type}}</td>  
+				            <td>{{ rec.task_perm_status}}</td>
+				            <td>{{ rec.create_dt}}</td>  
+				            <td>{{ rec.func}}</td>
+				            <td><a title="查看、编辑(id: {{rec.id}})详细信息" href="{% url "jobtask:taskdef-detail" rec.id %}">编辑</a></td>
+				        </tr>  
+				    {% endfor%}  
+				    </table>  
+				{% else %}  
+				<p>No Data !!!</p>  
+				{% endif %}  
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	
+	<div class="row page-row" style="padding: 0px; margin: 0px;">
+		<div class="col-md-1"></div>
+		<div class="col-md-10"  style="padding: 0px; margin: 0px;">
+				{% if is_paginated %}  
+		        <div class="panel-default"  style="align: right">
+	                <ul class="pagination">
+	                    <li><a href="{{ request.path }}?page=1&{{ querystr }}">&laquo;</a></li>
+	                    {% if page_obj.has_previous %}
+	                        <li><a href="{{ request.path }}?&page={{ page_obj.previous_page_number }}&{{ querystr }}">上一页</a></li>
+	                    {% else %}
+	                        <li class="previous disabled"><a>上一页</a></li>
+	                    {% endif %}
+<!-- 	                    {% for i in page_obj.paginator.page_range %}
+	                        <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&{{ querystr }}">{{ i }}</a></li>
+	                    {% endfor %} -->
+	                    {% for i in page_obj|page_range:8 %}
+	                        <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&{{ querystr }}">{{ i }}</a></li>
+	                    {% endfor %}
+	                    {% if page_obj.has_next %}
+	                        <li><a href="{{ request.path }}?page={{ page_obj.next_page_number }}&{{ querystr }}">下一页</a></li>
+	                    {% else %}
+	                        <li class="previous disabled"><a>下一页</a></li>
+	                    {% endif %}
+	                    <li><a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&{{ querystr }}">&raquo;</a></li>
+	                </ul>
+	        </div>
+			 {%endif%}  
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	
+
+</div>
+
+{% endblock %}
+
+{% block js_extend %}
+	<link href="{% static 'jquery/plugins/tablesort/css/theme.default.css' %}" rel="stylesheet">
+	<link href="{% static 'jquery/plugins/tablesort/css/theme.dropbox.css' %}" rel="stylesheet">
+	<script src="{% static 'jquery/plugins/tablesort/js/jquery.tablesorter.min.js' %}"></script>
+	<script src="{% static 'jquery/plugins/tablesort/js/jquery.tablesorter.widgets.min.js' %}"></script>
+	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
+	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
+	<script src="{% static 'util.js' %}"></script>
+	<script src="{% static 'jquery_util.js' %}"></script>
+	<script>
+	$(function(){
+
+		$('table').tablesorter({
+			widgets        : ['zebra', 'columns'],
+			usNumberFormat : false,
+			sortReset      : true,
+			sortRestart    : true
+		});
+		
+		$('#task_status,#task_type, #task_perm, #file_type').select2({});
+
+		
+		//var options = {selector: "#id_file_loc",url: "{% url 'jobtask:comm-iplist' %}",disp_fd: "key",val_fd: "value",value: "{{ object.file_loc }}"};
+		//load_data_for_select(options);
+		var options = {selector: "#task_status",url: "{% url 'jobtask:taskdef-status' %}", disp_fd: "key",val_fd: "value"};
+		load_data_for_select(options);
+		var options = {selector: "#task_type",url: "{% url 'jobtask:taskdef-type' %}", disp_fd: "key",val_fd: "value"};
+		load_data_for_select(options);
+		var options = {selector: "#task_perm",url: "{% url 'jobtask:taskdef-perm' %}", disp_fd: "key",val_fd: "value"};
+		load_data_for_select(options);
+		var options = {selector: "#file_type",url: "{% url 'jobtask:taskdef-filetype' %}",disp_fd: "key",val_fd: "value"};
+		load_data_for_select(options);
+		
+	});
+	</script>
+
+{% endblock %}
+

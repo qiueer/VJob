@@ -1,0 +1,152 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load bootstrap %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block body%}
+	<div class="contain-fluid">
+	
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-8">
+				<div class="form-group">
+				        <label class="control-label  " for="refresh-time">刷新间隔</label>
+				        <div class=" ">
+							<div class="btn-group refresh-time" data-toggle="buttons">
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off" data-val=""> 不刷新
+							  </label>
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off" data-val="2"> 2秒
+							  </label>
+							  <label class="btn btn-primary active">
+							    <input type="radio" name="options" autocomplete="off"  data-val="5" checked> 5秒
+							  </label>
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off" data-val="8"> 8秒
+							  </label>
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off"  data-val="10"> 10秒
+							  </label>
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off" data-val="15"> 15秒
+							  </label>
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off" data-val="30"> 30秒
+							  </label>
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off"  data-val="60"> 1分钟
+							  </label>
+							  <label class="btn btn-primary">
+							    <input type="radio" name="options" autocomplete="off" data-val="120"> 2分钟
+							  </label>
+							</div>
+				        </div>
+				</div>
+			</div>
+			<div class="col-md-1"></div>
+			<div class="col-md-1"></div>
+		</div>
+		
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-10">
+				<div class="p-info-container">
+			         <div class="alert alert-danger p-info" style="display: none">
+			         </div>
+				</div>
+			</div>
+			<div class="col-md-1"></div>
+		</div>
+
+		<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="job_table"></div>
+				</div>
+				<div class="col-md-1"></div>
+		</div>
+		
+		
+		<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class=""><hr /></div>
+				</div>
+				<div class="col-md-1"></div>
+		</div>
+		
+		<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-10">
+					<div class="jobtask_table"></div>
+				</div>
+				<div class="col-md-1"></div>
+		</div>
+
+	</div>
+
+{% endblock %}
+
+{% block js_extend %}
+	<script src="{% static '/jquery/plugins/jquery.form.min.js' %}"></script>
+	<script src="{% static 'django/csrf.js' %}"></script>
+	<script src="{% static 'jquery_util.js' %}"></script>
+	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
+	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
+	
+	<script>
+
+		var inter;
+		function refresh(){
+			$("div.jobtask_table").html("");
+			$.post("", undefined , function(jsonobj){
+					var html = jsonobj["html"];
+					var msg = jsonobj["msg"];
+					$("div.job_table").hide(100).html(html).fadeIn(500);
+					if(msg == "ok" && inter){
+						window.clearInterval(inter);
+					}
+					bind_load_jobtask();
+			});
+		}
+		
+		function bind_load_jobtask(){
+			$("a.view-jobtask-detail").each(function(){
+				var $a = $(this);
+				$a.click(function(){
+					var url = $a.attr("data-url");
+					$.post(url, undefined , function(jsonobj2){
+						var html = jsonobj2["html"];
+						var msg = jsonobj2["msg"];
+						$("div.jobtask_table").hide(100).html(html).fadeIn(500);
+					});
+				});
+			});
+		}
+		refresh();		
+		inter=window.setInterval(refresh,$("div.refresh-time label.active input").data("val")*1000);
+
+		$("div.refresh-time label").on("click", function(){
+			var reftime = $(this).find("input:first").data("val");
+			//console.info(reftime);
+			refresh();
+			$("div.jobtask_table").html("");
+			if(reftime && inter){
+				window.clearInterval(inter);
+				inter=window.setInterval(refresh,reftime*1000);
+			}
+			if(reftime == "" && inter){
+				window.clearInterval(inter);
+			}
+		});
+
+	    
+	</script>
+
+{% endblock %}
+
+

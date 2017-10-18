@@ -1,0 +1,110 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% load bootstrap %}
+
+
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block body%}
+	<div class="contain-fluid">
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<div class="p-info-container">
+			         <div class="alert alert-danger p-info" style="display: none">
+			         </div>
+				</div>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+		
+		<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<form class="form" action="{{ action }}" name="postform" method="post" enctype="multipart/form-data">
+					    {% csrf_token %}
+					    {{ form|bootstrap:6 }}
+					</form>
+				</div>
+				<div class="col-md-2"></div>
+		</div>
+		
+		<div class="row">
+				<div class="col-md-2"></div>
+				<div class="col-md-4"></div>
+				<div class="col-md-4" style="text-align: right">
+					    <a class="btn btn-success btn-add" action="add" href="#">Add</a>
+				</div>
+				<div class="col-md-2"></div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block js_extend %}
+	<script src="{% static '/jquery/plugins/jquery.form.min.js' %}"></script>
+	<script src="{% static 'django/csrf.js' %}"></script>
+	<script src="{% static 'jquery_util.js' %}"></script>
+	<script src="{% static 'jquery_util.js' %}"></script>
+	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
+	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
+	
+	<script>
+		var options = {selector: "#id_file_loc",url: "{% url 'jobtask:taskdef-filelocation' %}",disp_fd: "key",val_fd: "value",value: "{{ object.file_loc }}"};
+		load_data_for_select(options);
+		var options = {selector: "#id_task_status",url: "{% url 'jobtask:taskdef-status' %}", disp_fd: "key",val_fd: "value",value: "{{ object.task_status }}"};
+		load_data_for_select(options);
+		var options = {selector: "#id_task_type",url: "{% url 'jobtask:taskdef-type' %}", disp_fd: "key",val_fd: "value",value: "{{ object.task_type }}"};
+		load_data_for_select(options);
+		var options = {selector: "#id_task_perm_status",url: "{% url 'jobtask:taskdef-perm' %}", disp_fd: "key",val_fd: "value",value: "{{ object.task_perm_status }}"};
+		load_data_for_select(options);
+		var options = {selector: "#id_file_type",url: "{% url 'jobtask:taskdef-filetype' %}",disp_fd: "key",val_fd: "value",value: "{{ object.file_type }}"};
+		load_data_for_select(options);
+	
+		load_data_for_select("#id_file_loc", "{% url 'jobtask:taskdef-filelocation' %}", undefined, "key", "value");
+		load_data_for_select("#id_task_status", "{% url 'jobtask:taskdef-status' %}", undefined, "key", "value");
+		load_data_for_select("#id_task_type", "{% url 'jobtask:taskdef-type' %}", undefined, "key", "value");
+		load_data_for_select("#id_task_perm_status", "{% url 'jobtask:taskdef-perm' %}", undefined, "key", "value",);
+		load_data_for_select("#id_file_type", "{% url 'jobtask:taskdef-filetype' %}", undefined, "key", "value");
+	
+		//$("#id_file_loc, #id_task_status, #id_task_type, #id_task_perm_status, #id_file_type").select2();
+		$("div.remote_file_field, div.file_field").removeClass("col-md-6").addClass("col-md-12").hide();
+		$("select[name=file_loc]").change(function(){
+			var val = $(this).val();
+			if(val == 1){
+				$("div.remote_file_field").hide();
+				$("div.file_field").show();
+			}
+			if(val == 2){
+				$("div.file_field").hide();
+				$("div.remote_file_field").show();
+			}
+		});
+	    $(".btn-add").click(function(){
+	    	var flag = confirm("确定新增吗?");
+	    	if(flag == false){return false;}
+	    	var form = $("form[name=postform]");  
+            var options  = {      
+                    url: form.attr("action"),
+                    type:'post',      
+                    success:function(data)      
+                    {    //成功执行的方法  
+                    	var errmsg = data["errmsg"];
+                    	var field = data["field"];
+                    	var verbose_name = data["verbose_name"];
+						if(errmsg){$("div.p-info").hide().html(""+verbose_name+":"+errmsg).show(400);}
+						else{var id=data["id"];$("div.p-info").hide().html("成功，ID: " + id).show(400);}
+                    }      
+            };      
+            form.ajaxSubmit(options);  
+            return false; //防止刷新提交
+	    });
+
+	</script>
+
+{% endblock %}
+
+

@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %} 默认标题 {% endblock %}</title>
+    
+    <!-- Bootstrap -->
+    <link href="{% static 'bootstrap-3.3.7/css/bootstrap.min.css' %}" rel="stylesheet">
+    
+    {% block css_extend %}{% endblock %}
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="{% static 'plugins/html5shiv/3.7.3/html5shiv.min.js' %}"></script>
+      <script src="{% static 'respond.js/1.4.2/respond.min.js' %}"></script>
+    <![endif]-->
+  </head>
+
+	<body>
+	
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<ol class="breadcrumb">
+					  <li><a href="{% url 'jobtask:taskdef-list' %}">task def</a></li>
+					  <li><a href="{% url 'jobtask:comm_taskdef-list' %}">comm task def</a></li>
+					  <li><a href="{% url 'jobtask:comm_jobdef-list' %}">comm job def</a></li>
+					  <li><a href="{% url 'jobtask:job-list' %}">job</a></li>
+					  <li><a href="{% url 'jobtask:jobtask-list' %}">job task</a></li>
+					  <li><a href="{% url 'jobtask:task-list' %}">task</a></li>
+					  <li class="active">Data</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<ol class="breadcrumb">
+					  <li><a href="{% url 'jobtask:create-my-taskdef' %}">定义任务</a></li>
+					  <li><a href="{% url 'jobtask:my-taskdef-list' %}">我定义的任务列表</a></li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		
+		<div class="" style="padding-top: 8px">
+			{% block body %} 默认body {% endblock %}
+		</div>
+		
+	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	    <script src="{% static 'jquery/1.12.4/jquery.min.js' %}"></script>
+	    <!-- Include all compiled plugins (below), or include individual files as needed -->
+	    <script src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+	    
+	    {% block js_extend %}{% endblock %}
+  </body>
+</html>
