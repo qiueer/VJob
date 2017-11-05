@@ -111,7 +111,11 @@ class ListView(generic.ListView):
                 new_k = fieldmap[k]
                 if vs[0]: condition[new_k] = vs[0]
         
-        dataset = self.model.objects.filter(**condition)
+        ## 这里判断是否是个人的常规任务
+        user_open = self.kwargs.get("user-open", False)
+        if user_open == True:
+            condition["create_user"] = self.request.user.username
+        dataset = self.model.objects.filter(**condition).order_by("-id")
         return dataset  
   
     def get_context_data(self,**kwargs):  

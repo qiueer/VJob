@@ -36,13 +36,13 @@ def TaskPerm(request):
 
 @csrf_exempt
 def FileType(request):
-    file_type_map = [("", "请选择..."),  (1, "脚本"),(2, "脚本包")]
+    file_type_map = [("", "请选择..."),  (1, "单独文件"),(2, "执行包")]
     data = {"dataset": get_data_list(file_type_map)}
     return JsonResponse(data, safe=True)
 
 @csrf_exempt
 def FileLocation(request):
-    file_loc_choice = [("", "请选择..."),  (1, "本地"),(2, "服务器")]
+    file_loc_choice = [("", "请选择..."),  (1, "本地"),(2, "远程服务器")]
     data = {"dataset": get_data_list(file_loc_choice)}
     return JsonResponse(data, safe=True)
 

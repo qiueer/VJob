@@ -1,28 +1,30 @@
+{% load static %}
+<link href="{% static 'css/table.css' %}" rel="stylesheet">
 
 <div class="contain-fluid">
 	<div class="row">
 			<div class="col-md-12">
-				任务定义信息
+				<p style="font-weight: bold;">-- 任务定义信息 --</p>
 				<table class="table">
-					<tr class="row">
+					<tr class="tb_row">
 						<td class="td-info">脚本(包)位置</td>
 						<td class="td-val">{{ object.task.file_loc }}</td>
 						<td class="td-info">脚本(包)路径</td>
 						<td class="td-val">{% if object.task.file%} {{ object.task.file }} {% endif%}{% if object.task.remote_file%} {{ object.task.remote_file }} {% endif%}</td>
 					</tr>
-					<tr class="row">
+					<tr class="tb_row">
 						<td class="td-info">主脚本名</td>
 						<td class="td-val">{{ object.task.main_script_name }}</td>
 						<td class="td-info">解析器</td>
 						<td class="td-val">{{ object.task.executor }}</td>
 					</tr>			
-					<tr class="row">
+					<tr class="tb_row">
 						<td class="td-info">默认参数</td>
 						<td class="td-val">{{ object.task.params }}</td>
 						<td class="td-info">功能说明</td>
 						<td class="td-val">{{ object.task.func }}</td>
 					</tr>
-					<tr class="row">
+					<tr class="tb_row">
 						<td class="td-info">任务创建用户</td>
 						<td class="td-val">{{ object.task.create_user }}</td>
 						<td class="td-info">最后更新时间</td>
@@ -34,21 +36,21 @@
 	
 	<div class="row">
 			<div class="col-md-12">
-				任务定义及目标主机信息
+				<p style="font-weight: bold;">-- 任务定义及目标主机信息 --</p>
 				<table class="table">
-					<tr class="row">
+					<tr class="tb_row">
 						<td class="td-info">目标主机</td>
 						<td class="td-val">{{ object.iphosts }}</td>
 						<td class="td-info">脚本参数</td>
 						<td class="td-val"> {{ object.params }} </td>
 					</tr>
-					<tr class="row">
+					<tr class="tb_row">
 						<td class="td-info">远程执行账户</td>
 						<td class="td-val">{{ object.exec_user }}</td>
 						<td class="td-info">超时时间</td>
 						<td class="td-val">{{ object.timeout }}</td>
 					</tr>			
-					<tr class="row">
+					<tr class="tb_row">
 						<td class="td-info"></td>
 						<td class="td-val"></td>
 						<td class="td-info">功能说明</td>

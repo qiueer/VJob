@@ -51,12 +51,11 @@
 				<div class="row">
 					<div class="col-md-4">
 						<div class="datatable-desc">
-							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">常规作业信息表</span>
+							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">子任务信息列表</span>
 						</div>
 					</div>
 					<div class="col-md-6"></div>
 					<div class="col-md-2">
-						<a style="width: 100%" class="btn  btn-success" href="{% url "jobtask:comm_jobdef-new" %}">增加</a>
 					</div>
 				</div> <!-- row -->
 				<hr />
@@ -64,7 +63,6 @@
 		</div>
 		<div class="col-md-1"></div>
 	</div>
-
 	
 	<div class="row datatable-row">
 		<div class="col-md-1"></div>
@@ -72,36 +70,37 @@
 				{% if dataset %}  
 				    <table class="table tablesorter-dropbox">  
 				        <thead>  
-				            <th>任务列表</th> 
-				            <th>作业状态</th>  
-				            <th>作业类型</th>
-				            <th>作业权限状态</th>  
-				            <th>作业功能</th>  
-				            <th>创建用户</th> 
-				            <th>创建时间</th> 
-				            <th>备注</th>  
-				            <th>操作</th>
-				        </thead>  
+				            <th>ID</th> 
+				            <th>父任务</th>  
+				            <th>文件位置</th>
+				            <th>文件路径</th> 
+				            <th>主执行程序</th>  
+				            <th>参数</th>  
+				            <th>解析器</th>  
+				            <th>执行用户</th>  
+				            <th>主执行程序</th>  
+				            <th>IP/主机名</th>  
+				            <th>创建时间</th>  
+				            <th>最后更新时间</th>  
+				            <th>任务状态</th>  
+				        </thead>
+
 				    {%for rec in dataset %}  
 				        <tr class="tb_row">  
 				            <td>
-				            	<ul>
-						            {% for task in rec.comm_tasks.all %}
-						            <li><a title="查看任务详细信息" href="#" data-toggle="modal" data-target="#commtask_modal" data-commtask="{{ task.id }}" data-url="{% url 'jobtask:comm_taskdef-detail_for_modal' task.id %}">{{ task }}</a></li>
-						            {% endfor %}
-				            	</ul>
+				            	<a href="{% url 'jobtask:jobsubtask-detail'  rec.id rec.jobtask.id %}">{{ rec.id }}</a>
 				            </td>  
-				            <td>{{ rec.job_status}}</td> 
-				            <td>{{ rec.job_type}}</td>  
-				            <td>{{ rec.job_perm_status}}</td>  
-				            <td>{{ rec.func}}</td>  
-				            <td>{{ rec.create_user}}</td>
-				            <td>{{ rec.create_dt}}</td>
-				            <td>{{ rec.note}}</td>  
-				            <td>
-				            	<a class="btn btn-info" title="查看、编辑(id: {{rec.id}})详细信息" href="{% url "jobtask:comm_jobdef-detail" rec.id %}">编辑</a>
-				            	<a class="btn btn-info" title="发起作业(id: {{rec.id}})" data-url="{% url 'jobtask:job-new' rec.id %}" data-toggle="modal" data-target="#runjob"  href="#">Run</a>
-				            </td>
+				            <td><a href="{% url 'jobtask:jobtask-detail' rec.jobtask.id rec.id rec.jobtask.job.jobid%}">{{ rec.jobtask.id }}</a></td>
+				            <td>{{ rec.file_loc}}</td> 
+				            <td>{{ rec.file}}</td>  
+				            <td>{{ rec.main_script_name}}</td>  
+				            <td>{{ rec.params}}</td>  
+				            <td>{{ rec.executor}}</td>  
+				            <td>{{ rec.exe_user}}</td>  
+				            <td>{{ rec.iphost}}</td>  
+				            <td>{{ rec.create_dt}}</td>  
+				            <td>{{ rec.update_dt}}</td>  
+				            <td>{{ rec.task_status}}</td>  
 				        </tr>  
 				    {% endfor%}  
 				    </table>  
@@ -162,7 +161,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-info" data-dismiss="modal">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -186,7 +185,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-info" data-dismiss="modal">确定</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -197,7 +196,6 @@
 
 {% block js_extend %}
 	<script src="{% static 'jquery/plugins/tablesort/js/jquery.tablesorter.min.js' %}"></script>
-	<link href="{% static 'jquery/plugins/tablesort/css/theme.dropbox.css' %}" rel="stylesheet">
 	<script src="{% static 'jquery/plugins/jquery.ui.min.js' %}"></script>
 	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
 	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>

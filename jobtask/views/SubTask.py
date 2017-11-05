@@ -41,9 +41,9 @@ class DetailView(generic.View):
         try:
             oid = kwargs.get("pk", None)
             taskid = kwargs.get("taskid", None)
-            tpl_name = "jobtask/jobsubtask/ajax_detail.html"
+            tpl_name = "jobtask/subtask/ajax_detail.html"
             context = locals()
-            obj = get_object_or_404(models.Job_SubTask, id=oid)
+            obj = get_object_or_404(models.SubTask, id=oid)
             context["object"] = obj
             t = loader.get_template(tpl_name)
             data = {"html": t.render(context), "msg": "ok" if obj.task_status==1 else "nook"}

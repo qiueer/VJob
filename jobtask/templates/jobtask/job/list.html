@@ -51,7 +51,7 @@
 				<div class="row">
 					<div class="col-md-4">
 						<div class="datatable-desc">
-							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">作业信息表</span>
+							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">历史作业表</span>
 						</div>
 					</div>
 					<div class="col-md-6"></div>
@@ -145,7 +145,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+        <button type="button" class="btn btn-info" data-dismiss="modal">确定</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -180,6 +180,7 @@
 
 {% block js_extend %}
 	<script src="{% static 'jquery/plugins/tablesort/js/jquery.tablesorter.min.js' %}"></script>
+	<link href="{% static 'jquery/plugins/tablesort/css/theme.dropbox.css' %}" rel="stylesheet">
 	<script src="{% static 'jquery/plugins/jquery.ui.min.js' %}"></script>
 	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
 	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
@@ -208,6 +209,8 @@
 			});
 			
 		$('#runjob').on('show.bs.modal', function (event) {
+	    	  var flag = confirm("确定要发起作业吗？");
+	    	  if(flag == false){return false;}
 			  var button = $(event.relatedTarget); // Button that triggered the modal
 			  var url = button.data("url");
 			  var modal = $(this);

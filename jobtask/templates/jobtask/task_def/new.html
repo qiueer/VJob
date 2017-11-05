@@ -53,7 +53,7 @@
 	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
 	
 	<script>
-		var options = {selector: "#id_file_loc",url: "{% url 'jobtask:taskdef-filelocation' %}",disp_fd: "key",val_fd: "value",value: "{{ object.file_loc }}"};
+		var options = {selector: "#id_file_loc",url: "{% url 'jobtask:taskdef-filelocation' %}",disp_fd: "key",val_fd: "value",value: "1"};
 		load_data_for_select(options);
 		var options = {selector: "#id_task_status",url: "{% url 'jobtask:taskdef-status' %}", disp_fd: "key",val_fd: "value",value: "{{ object.task_status }}"};
 		load_data_for_select(options);
@@ -64,14 +64,10 @@
 		var options = {selector: "#id_file_type",url: "{% url 'jobtask:taskdef-filetype' %}",disp_fd: "key",val_fd: "value",value: "{{ object.file_type }}"};
 		load_data_for_select(options);
 	
-		load_data_for_select("#id_file_loc", "{% url 'jobtask:taskdef-filelocation' %}", undefined, "key", "value");
-		load_data_for_select("#id_task_status", "{% url 'jobtask:taskdef-status' %}", undefined, "key", "value");
-		load_data_for_select("#id_task_type", "{% url 'jobtask:taskdef-type' %}", undefined, "key", "value");
-		load_data_for_select("#id_task_perm_status", "{% url 'jobtask:taskdef-perm' %}", undefined, "key", "value",);
-		load_data_for_select("#id_file_type", "{% url 'jobtask:taskdef-filetype' %}", undefined, "key", "value");
 	
 		//$("#id_file_loc, #id_task_status, #id_task_type, #id_task_perm_status, #id_file_type").select2();
-		$("div.remote_file_field, div.file_field").removeClass("col-md-6").addClass("col-md-12").hide();
+		$("div.remote_file_field, div.file_field").removeClass("col-md-6").addClass("col-md-12"); //.hide();
+		$("div.remote_file_field").hide();
 		$("select[name=file_loc]").change(function(){
 			var val = $(this).val();
 			if(val == 1){
@@ -103,6 +99,7 @@
             return false; //防止刷新提交
 	    });
 
+	    
 	</script>
 
 {% endblock %}

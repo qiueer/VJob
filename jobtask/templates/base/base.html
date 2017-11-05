@@ -10,7 +10,6 @@
     
     <!-- Bootstrap -->
     <link href="{% static 'bootstrap-3.3.7/css/bootstrap.min.css' %}" rel="stylesheet">
-    
     {% block css_extend %}{% endblock %}
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -43,8 +42,12 @@
 			<div class="row">
 				<div class="col-md-12">
 					<ol class="breadcrumb">
-					  <li><a href="{% url 'jobtask:create-my-taskdef' %}">定义任务</a></li>
+					  <li><a href="{% url 'jobtask:create-my-taskdef' %}">定义新任务</a></li>
 					  <li><a href="{% url 'jobtask:my-taskdef-list' %}">我定义的任务列表</a></li>
+					  <li><a href="{% url 'jobtask:my-comm-taskdef-list' %}">我的常规任务定义列表</a></li>
+					  <li><a href="{% url 'jobtask:my-comm-jobdef-list' %}">我的常规作业定义列表</a></li>
+					  <li><a href="{% url 'jobtask:my-job-list' %}">我的作业</a></li>
+					  <li><a href="{% url 'jobtask:my-task-list' %}">我的任务</a></li>
 					</ol>
 				</div>
 			</div>

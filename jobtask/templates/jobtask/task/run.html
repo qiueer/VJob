@@ -1,0 +1,58 @@
+
+<form class="form" action="" name="postform" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-4 params_field">
+				<div class="form-group">
+				        <label class="control-label  " for="id_params">参数</label>
+				        <div class=" ">
+				            <textarea name="params" id="id_params" rows="1" cols="40" class=" form-control"></textarea>
+						</div>
+				</div>
+			</div>
+	
+			<div class="col-md-4 exe_user_field">
+				<div class="form-group">
+				        <label class="control-label  " for="id_exe_user">执行用户</label>
+				        <div class=" ">
+				            <input type="text" name="exe_user" id="id_exe_user" required class=" form-control" maxlength="64" />
+				        </div>
+				</div>
+			</div>
+					
+			<div class="col-md-4 timeout_field">
+				<div class="form-group">
+				        <label class="control-label  " for="id_timeout">超时时间</label>
+				        <div class=" ">
+				            <input type="number" name="timeout" required class=" form-control" id="id_timeout" />
+				        </div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-md-12 iphosts_field">
+				<div class="form-group">
+				        <label class="control-label  " for="iphosts">IP或主机名</label>
+				        <div class="">
+				            <select id="iphosts" style="width:100%" name="iphosts" multiple="multiple" required data-placeholder="Select Ip" class="select2 form-control"></select>
+				        </div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="row">
+			<div class="col-md-12 note_field">
+				<div class="form-group">
+				        <label class="control-label  " for="id_note">备注</label>
+				        <div class=" ">
+				            <textarea name="note" id="id_note" required rows="2"  class=" form-control"></textarea>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+

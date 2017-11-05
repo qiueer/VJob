@@ -51,7 +51,7 @@
 				<div class="row">
 					<div class="col-md-4">
 						<div class="datatable-desc">
-							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">任务信息表</span>
+							<span style="font-size: 18px; margin: 0 auto; vertical-align: middle; display:inline-block">历史任务表</span>
 						</div>
 					</div>
 					<div class="col-md-6"></div>
@@ -72,7 +72,7 @@
 				    <table class="table tablesorter-dropbox">  
 				        <thead>  
 				            <th>任务号</th>
-				            <th>任务定义</th>
+				            <th>任务</th>
 				            <th>执行用户</th>
 				            <th>参数</th>
 				            <th>主机列表</th>
@@ -195,6 +195,7 @@
 
 {% block js_extend %}
 	<script src="{% static 'jquery/plugins/tablesort/js/jquery.tablesorter.min.js' %}"></script>
+	<link href="{% static 'jquery/plugins/tablesort/css/theme.dropbox.css' %}" rel="stylesheet">
 	<script src="{% static 'jquery/plugins/jquery.ui.min.js' %}"></script>
 	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
 	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>

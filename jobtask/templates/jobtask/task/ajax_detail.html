@@ -35,6 +35,7 @@
 				            <th>超时时间</th>  
 				            <th>创建时间</th> 
 				            <th>任务状态</th>  
+				            <th>查看</th>  
 				        </thead>
 				    {%for rec in object.subtasks.all %}  
 				        <tr class="tb_row">  
@@ -46,6 +47,9 @@
 				            <td>{{ rec.timeout}}</td>  
 				            <td>{{ rec.create_dt}}</td>
 				            <td>{{ rec.task_status}}</td>
+				            <td>
+				            	<a class="btn btn-info" title="查看(id: {{rec.id}})详细信息" href="{% url 'jobtask:subtask-detail' rec.id object.id %}" target="_blank">查看执行情况</a>
+				            </td>
 				        </tr>  
 				    {% endfor%}  
 				    </table>  

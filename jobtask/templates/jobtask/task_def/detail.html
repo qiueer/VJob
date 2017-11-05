@@ -52,7 +52,19 @@
 
 	<script>
 
+		function  file_loc_change(){
+			var val = $("#id_file_loc").val();
+			if(val == 1){
+				$("div.remote_file_field").hide();
+				$("div.file_field").show();
+			}
+			if(val == 2){
+				$("div.file_field").hide();
+				$("div.remote_file_field").show();
+			}
+		}
 		var options = {selector: "#id_file_loc",url: "{% url 'jobtask:taskdef-filelocation' %}",disp_fd: "key",val_fd: "value",value: "{{ object.file_loc }}"};
+		options.callback = file_loc_change;
 		load_data_for_select(options);
 		var options = {selector: "#id_task_status",url: "{% url 'jobtask:taskdef-status' %}", disp_fd: "key",val_fd: "value",value: "{{ object.task_status }}"};
 		load_data_for_select(options);
@@ -64,17 +76,10 @@
 		load_data_for_select(options);
 		//$(".select2").select2();
 		
+		
 		$("div.remote_file_field, div.file_field").removeClass("col-md-4").addClass("col-md-12");
 		$("select[name=file_loc]").change(function(){
-			var val = $(this).val();
-			if(val == 1){
-				$("div.remote_file_field").hide();
-				$("div.file_field").show();
-			}
-			if(val == 2){
-				$("div.file_field").hide();
-				$("div.remote_file_field").show();
-			}
+			file_loc_change();
 		});
 
 	    $(".btn-update, .btn-clone, .btn-delete").click(function(){
@@ -103,6 +108,7 @@
             form.ajaxSubmit(options);  
             return false; //防止刷新提交
 	    });
+	    
 	    
 	</script>
 

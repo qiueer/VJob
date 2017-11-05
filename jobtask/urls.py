@@ -56,7 +56,8 @@ urlpatterns = [
     ## Task
     url(r"^task/list$", views.Task.ListView.as_view(), name="task-list"),
     url(r"^task/(?P<pk>\d+)/(?P<taskid>\d+)$", views.Task.DetailView.as_view(), name="task-detail"),
-    url(r"^task/run/(\d+)$", views.Task.Run.as_view(), name="task-run"),
+    url(r"^task/commtask/run/(\d+)$", views.Task.Run.as_view(), name="comm-task-run"),
+    url(r"^task/run/(\d+)$", views.Task.RunTask.as_view(), name="task-run"),
     ## SubTask
     url(r"^subtask/list$", views.SubTask.ListView.as_view(), name="subtask-list"),
     url(r"^subtask/(?P<pk>\d+)/(?P<taskid>\d+)$", views.SubTask.DetailView.as_view(), name="subtask-detail"),
@@ -67,5 +68,10 @@ urlpatterns += [
     ## TaskDef
     url(r"task/def$", views.TaskDef.AddView.as_view(), name="create-my-taskdef"),
     url(r"^task/def/my$", views.TaskDef.ListView.as_view(), {"user-open": True}, name="my-taskdef-list"),
-    url(r'^task/def/my/(?P<pk>\d+)$', views.TaskDef.DetailView.as_view(), name='my-taskdef-detail'), #old
+    #url(r'^task/def/my/(?P<pk>\d+)$', views.TaskDef.DetailView.as_view(), name='my-taskdef-detail'), #old
+    url(r"^comm_taskdef/list/my$", views.CommTaskDef.ListView.as_view(), {"user-open": True}, name="my-comm-taskdef-list"),
+    url(r"^comm_jobdef/list/my$", views.CommJobDef.ListView.as_view(), {"user-open": True}, name="my-comm-jobdef-list"),
+    url(r"^job/list/my$", views.Job.ListView.as_view(), {"user-open": True}, name="my-job-list"),
+    url(r"^jobtask/list/my$", views.JobTask.ListView.as_view(), {"user-open": True}, name="my-jobtask-list"),
+    url(r"^task/list/my$", views.Task.ListView.as_view(), {"user-open": True}, name="my-task-list"),
 ]

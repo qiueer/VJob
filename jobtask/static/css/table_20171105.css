@@ -2,12 +2,19 @@
 
 table.table {width:100%;}
 table.table thead:hover {cursor: pointer;}
+table.table thead th { background-color: #ccff99;text-align: center;}
+table.table tr.tb_row {}
 table.table tr.tb_row td {
 	padding:8px;
 	font-size:14px;
+	width:50px;
+	max-width:100px;
+	border-left: none;
+	border-right: none;
 	border-top:1px solid #aeaeae;
 	border-bottom:1px solid #aeaeae;
 	word-wrap:break-word;
+	text-align: center;
 	margin: 0 auto;
 	vertical-align: middle;
 }

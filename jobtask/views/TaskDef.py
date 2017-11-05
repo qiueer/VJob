@@ -95,7 +95,7 @@ class ListView(generic.ListView):
         user_open = self.kwargs.get("user-open", False)
         if user_open == True:
             condition["create_user"] = self.request.user.username
-        dataset = self.model.objects.filter(**condition).order_by("-create_dt")
+        dataset = self.model.objects.filter(**condition).order_by("-id")
         return dataset  
   
     def get_context_data(self,**kwargs):  

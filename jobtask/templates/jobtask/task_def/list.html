@@ -61,7 +61,7 @@
 			            	<label for="search" class="control-label required-field ">
 			                	搜索
 			            	</label>
-							<input id="search" class="js-states form-control" value="{{ search }}" required name="search"  />
+							<input id="search" class="js-states form-control" value="{{ search }}"  name="search"  />
 						</div>
 					</div>
 					<div class="col-md-4">
@@ -93,7 +93,7 @@
 					</div>
 					<div class="col-md-6"></div>
 					<div class="col-md-2">
-						<a style="width: 100%" class="btn  btn-success" href="{% url "jobtask:taskdef-add" %}">增加</a>
+						<a style="width: 100%" class="btn  btn-success" href="{% url "jobtask:taskdef-add" %}">定义新任务</a>
 					</div>
 				</div> <!-- row -->
 				<hr />
@@ -133,8 +133,11 @@
 				            <td>{{ rec.task_perm_status}}</td>
 				            <td>{{ rec.create_dt}}</td>  
 				            <td>{{ rec.func}}</td>
-				            <td><a title="查看、编辑(id: {{rec.id}})详细信息" href="{% url "jobtask:taskdef-detail" rec.id %}">编辑</a></td>
-				        </tr>  
+				            <td>
+				            	<a class="btn btn-info" title="查看、编辑(id: {{rec.id}})详细信息" href="{% url "jobtask:taskdef-detail" rec.id %}">编辑</a>
+				            	<a class="btn btn-info" title="发起任务(id: {{rec.id}})" data-url="{% url 'jobtask:task-run' rec.id %}" data-toggle="modal" data-target="#run_task_modal"  href="#">发起任务</a>
+				            </td>
+				        </tr>
 				    {% endfor%}  
 				    </table>  
 				{% else %}  
@@ -178,6 +181,114 @@
 
 </div>
 
+<div id="run_task_modal" class="modal fade  " tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">任务配置</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="row">
+      		<div class="col-md-12">
+      			<div class="alert alert-danger p-info" style="display:none">
+      				（执行用户、超时时间、IP主机、备注说明）不能为空
+      			</div>
+      		</div>
+      	</div>
+        <div class="row">
+          <div class="col-md-12">
+          	    <div class="content">
+					<form id="form_run_task" class="form" action="" name="postform" method="post" enctype="multipart/form-data">
+					    {% csrf_token %}
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-4 params_field">
+									<div class="form-group">
+									        <label class="control-label  " for="id_params">参数</label>
+									        <div class=" ">
+									            <textarea name="params" id="id_params" rows="1" cols="40" class=" form-control"></textarea>
+											</div>
+									</div>
+								</div>
+						
+								<div class="col-md-4 exe_user_field">
+									<div class="form-group">
+									        <label class="control-label  " for="id_exe_user">执行用户</label>
+									        <div class=" ">
+									            <input type="text" name="exe_user" id="id_exe_user" required class=" form-control" maxlength="64" />
+									        </div>
+									</div>
+								</div>
+										
+								<div class="col-md-4 timeout_field">
+									<div class="form-group">
+									        <label class="control-label  " for="id_timeout">超时时间</label>
+									        <div class=" ">
+									            <input type="number" name="timeout" required class=" form-control" id="id_timeout" />
+									        </div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12 iphosts_field">
+									<div class="form-group">
+									        <label class="control-label  " for="iphosts">IP或主机名</label>
+									        <div class="">
+									            <select id="iphosts" style="width:100%" name="iphosts" multiple="multiple" required data-placeholder="Select Ip" class="select2 form-control"></select>
+									        </div>
+									</div>
+								</div>
+							</div>
+						
+							<div class="row">
+								<div class="col-md-12 note_field">
+									<div class="form-group">
+									        <label class="control-label  " for="id_note">备注</label>
+									        <div class=" ">
+									            <textarea name="note" id="id_note" required rows="2"  class=" form-control"></textarea>
+											</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+          	    
+          	    </div> <!-- content -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-info" id="btn_run_task">确定</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="modal-info" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">提示</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+          	<div class="content"></div>
+          	<div class="errmsg"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" data-dismiss="modal">确定</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 {% endblock %}
 
 {% block js_extend %}
@@ -189,9 +300,20 @@
 	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
 	<script src="{% static 'util.js' %}"></script>
 	<script src="{% static 'jquery_util.js' %}"></script>
+	
+	<script src="{% static '/jquery/plugins/jquery.form.min.js' %}"></script>
+	<script src="{% static 'jquery/plugins/jquery.ui.min.js' %}"></script>
+	<script src="{% static 'django/csrf.js' %}"></script>
+	
 	<script>
 	$(function(){
 
+		$("#run_task_modal,#modal-info").draggable({   
+		    handle: ".modal-header",   
+		    cursor: 'move',   
+		    refreshPositions: false  
+		});
+		
 		$('table').tablesorter({
 			widgets        : ['zebra', 'columns'],
 			usNumberFormat : false,
@@ -201,7 +323,6 @@
 		
 		$('#task_status,#task_type, #task_perm, #file_type').select2({});
 
-		
 		//var options = {selector: "#id_file_loc",url: "{% url 'jobtask:comm-iplist' %}",disp_fd: "key",val_fd: "value",value: "{{ object.file_loc }}"};
 		//load_data_for_select(options);
 		var options = {selector: "#task_status",url: "{% url 'jobtask:taskdef-status' %}", disp_fd: "key",val_fd: "value"};
@@ -212,6 +333,48 @@
 		load_data_for_select(options);
 		var options = {selector: "#file_type",url: "{% url 'jobtask:taskdef-filetype' %}",disp_fd: "key",val_fd: "value"};
 		load_data_for_select(options);
+
+		$('#run_task_modal').on('show.bs.modal', function (event) {
+			  $('#iphosts').select2({});
+			  var options = {selector: "#iphosts",url: "{% url 'jobtask:comm-iplist' %}",disp_fd: "key",val_fd: "value"};
+			  load_data_for_select(options);
+			  
+			  var button = $(event.relatedTarget); // Button that triggered the modal
+			  var url = button.data("url");
+			  var modal = $(this);
+			  modal.find("div.p-info").hide();
+			  modal.find("form").attr("action", url);
+			  $("#btn_run_task").on("click",function(){
+			    	var flag = confirm("确定要发起任务吗？");
+			    	if(flag == false){return false;}
+			    	var form = $("#form_run_task");
+		            var options  = {      
+		                    url: form.attr("action"),
+		                    type:'post',      
+		                    success:function(data)      
+		                    {    //成功执行的方法 
+		                    	console.info(data);
+		                    	var ret_code = data["code"];
+		                    	var ret_errmsg = data["msg"];
+		                    	var taskid = data["taskid"];
+		                    	if (ret_code != 0){
+		                    		//modal.find("div.p-info").html(""+ret_errmsg).hide().show(10);
+		                    		modal.find("div.p-info").hide().show(100);
+		                    		return false;
+		                    	}else{
+		                    		var url = data["url"];
+		                    		modal.modal("hide");
+		                    		$('#modal-info').modal("show");
+		                    		$('#modal-info').find(".content").html("任务ID: "+'<a target="_blank" href="' + url+ '">'+ taskid + '</a>');
+		                    	}
+		                    }      
+		            };
+		            
+		            form.ajaxSubmit(options);  
+		            return false; //防止刷新提交
+			  });
+
+		});
 		
 	});
 	</script>
