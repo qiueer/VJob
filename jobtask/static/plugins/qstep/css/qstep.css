@@ -1,0 +1,15 @@
+*{margin:0;padding:0;list-style-type:none;}
+a,img{border:0;}
+body{font:12px/180% Arial, Helvetica, sans-serif, "新宋体";}
+
+.formbox{width:488px;margin:40px auto;}
+.formcon{padding:10px 0;border:solid 1px #ddd}
+.formcon table input{width:200px;}
+.formcon table td{padding:5px;line-height:24px;}
+/* flow_steps */
+.flow_steps{height:23px;overflow:hidden;}
+.flow_steps li{float:left;height:23px;padding:0 40px 0 30px;line-height:23px;text-align:center;background:url(images/barbg.png) no-repeat 100% 0 #E4E4E4;font-weight:bold;}
+.flow_steps li.done{background-position:100% -46px;background-color:#FFEDA2;}
+.flow_steps li.current_prev{background-position:100% -23px;background-color:#FFEDA2;}
+.flow_steps li.current{color:#fff;background-color:#990D1B;}
+.flow_steps li#qzfs.current,.flow_steps li.last{background-image:none;}

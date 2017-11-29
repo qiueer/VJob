@@ -42,6 +42,8 @@ urlpatterns = [
     url(r"^comm_jobdef/new$", views.CommJobDef.AddView.as_view(), name="comm_jobdef-new"),
     url(r"^comm_jobdef/list$", views.CommJobDef.ListView.as_view(), name="comm_jobdef-list"),
     url(r"^comm_jobdef/(?P<pk>\d+)$", views.CommJobDef.DetailView.as_view(), name="comm_jobdef-detail"),
+    url(r"^comm_jobdef/modal/(?P<pk>\d+)$", views.CommJobDef.DetailViewForModal.as_view(), name="comm_jobdef-detail_for_modal"),
+
     ## Job
     url(r"^job/list$", views.Job.ListView.as_view(), name="job-list"),
     url(r"^job/(?P<pk>\d+)/(?P<jobid>\d+)$", views.Job.DetailView.as_view(), name="job-detail"),
@@ -70,6 +72,7 @@ urlpatterns += [
     url(r"^task/def/my$", views.TaskDef.ListView.as_view(), {"user-open": True}, name="my-taskdef-list"),
     #url(r'^task/def/my/(?P<pk>\d+)$', views.TaskDef.DetailView.as_view(), name='my-taskdef-detail'), #old
     url(r"^comm_taskdef/list/my$", views.CommTaskDef.ListView.as_view(), {"user-open": True}, name="my-comm-taskdef-list"),
+    url(r"^comm_taskdef/listtask/my$", views.CommTaskDef.ListTask.as_view(), {"user-open": True}, name="my-comm-taskdef-list-task"),
     url(r"^comm_jobdef/list/my$", views.CommJobDef.ListView.as_view(), {"user-open": True}, name="my-comm-jobdef-list"),
     url(r"^job/list/my$", views.Job.ListView.as_view(), {"user-open": True}, name="my-job-list"),
     url(r"^jobtask/list/my$", views.JobTask.ListView.as_view(), {"user-open": True}, name="my-jobtask-list"),

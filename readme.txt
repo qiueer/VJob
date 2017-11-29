@@ -1,7 +1,7 @@
 ### 创建数据库及授权
-create database dj_helloworld default characters set utf8;
+create database db_jobtask default characters set utf8;
 create user django identified by 'dj123456'; 
-grant all privileges on dj_helloworld.* to django@'%';
+grant all privileges on db_jobtask.* to django@'%';
 flush privileges;
 
 ### 
@@ -52,7 +52,7 @@ SESSION_CACHE_ALIAS = "session"
 ### 管理员
 1）创建管理员
 python manage.py createsuperuser
-用户名/密码： admin / qiueer@2016
+用户名/密码： admin / qjq@2016
 
 
 ### 新建APP的步骤

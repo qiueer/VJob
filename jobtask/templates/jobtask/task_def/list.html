@@ -344,6 +344,7 @@
 			  var modal = $(this);
 			  modal.find("div.p-info").hide();
 			  modal.find("form").attr("action", url);
+			  $('#btn_run_task').unbind("click"); //避免多次绑定
 			  $("#btn_run_task").on("click",function(){
 			    	var flag = confirm("确定要发起任务吗？");
 			    	if(flag == false){return false;}

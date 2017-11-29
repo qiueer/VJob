@@ -62,7 +62,7 @@ class DetailView(generic.View):
 
 class ListView(generic.ListView):
     model = models.Job
-    template_name = 'jobtask/job/list.html'  
+    template_name = 'jobtask/job/list_v2.html'  
     context_object_name = 'dataset'  
     paginate_by = 5 #加上这句就自动开启了分页功能
     allow_empty_first_page = True

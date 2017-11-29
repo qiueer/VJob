@@ -1,0 +1,378 @@
+<!-- <script src="/assets/javascript/jquery-1.9.1.js" type="text/javascript"></script> -->
+<script src="/assets/javascript/highcharts-4.0.3/highcharts.src.js"></script>
+<!-- <script src="/assets/javascript/highcharts-4.0.3/modules/exporting.js"></script> -->
+<script src="/assets/javascript/lib/highchart3.4_extend/hc_extend.js"></script>
+
+<style>
+div.con-all {}
+div.con-all div.con-header {
+	margin: 0 0 8px 0;
+}
+
+div.con-all div.con-content {
+	border: 1px solid #99bb99;
+}
+div.con-all div.con-footer {
+	border: 1px solid #99bb99;
+	margin: 8px 0 0 0;
+}
+
+div.dashrow {
+	border: 1px dashed #bbb;
+	background-color: #65EC76;
+	margin: 4px 0;
+	padding: 5px 12px;
+}
+
+div.connectedSortableRow {
+	min-height: 100px;
+}
+
+div.row_panel {
+
+ 	padding: 4px;
+}
+
+.ui-state-highlight {
+	/* height: 1.5em;  */
+	/* height: 30px; */
+	width: 100%;
+	/* height: 100%; */
+	border: 1px dashed #ff0000;
+	background-color: #BADB56;
+	opacity: 0.5;
+  	margin: 4px 4px;
+ 	padding: 6px;
+}
+
+div.row_editor {
+  position: relative;
+  padding: 0px;
+  margin: 0px;
+}
+
+div.my-btn-row-editor {
+  position: absolute;
+  top: -6px;
+  left: -13px;
+  z-index:80;
+  padding: 0px;
+  margin: 0px;
+}
+
+button.btn-albert-drop {
+	padding: 3px;
+}
+
+button.btn-panel {
+	padding: 3px
+}
+
+div.portlet {
+	margin: 0px !important;
+}
+
+div.portlet-header {
+	height: 30px;
+	background-color: #afafaf;
+}
+
+</style>
+
+
+<div class="container-fluid con-all">
+	<div id="abc" class="container-fluid con-header">
+		<div class="row">
+			<div class="form-group">
+					<div class="col-md-1">Name</div>
+					<div class="col-md-3">
+						<input type="text" id="name" name="name" class="form-control  required" value="<?php if(isset($dname)) {echo $dname;}?>" />
+						<input type="hidden" id="hidden" name="hidden"  did="<?php if(isset($did)) {echo $did;}?>" dtype="<?php if(isset($dtype)) {echo $dtype;}?>">
+					</div>
+					<div class="col-md-1">
+						<button class="btn btn-success">Save</button>
+					</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid con-content">
+		<div class="row">
+			<div class="col-md-0"></div>
+			<div class="col-md-12">
+					<div id="dashboard" class="container-fluid"><!-- for dashboard -->
+					</div>
+					<div class="container-fluid" style="text-align: right">
+						<div class="col-md-10"></div>
+						<div class="col-md-2" style="padding: 0px; margin: 0px;"><button class="btn btn-success btn-add-row">Add Row</button></div>
+					</div>
+			</div>
+			<div class="col-md-0"></div>
+		</div>
+	</div>
+
+
+	<div class="container-fluid con-footer">
+		footer
+	</div>
+</div>
+
+<script>
+
+//add row, to db
+function post_add_row(con_selector, row_id, row_class)
+{
+	var did = $("#hidden").attr("did");
+	var dtype = $("#hidden").attr("dtype");
+	var add_row_uri = "/dashboard/add_row";
+	var post = {"did":did, "dtype":dtype};
+	load_ajax_data(add_row_uri, post, function(jsondata){
+		var obj = from_json(jsondata);
+		var row_id_from_ajax = obj.rowid;
+		add_row(con_selector, row_id, row_class, row_id_from_ajax);
+	});
+}
+
+function post_add_graphic(row_id, size, panel_id)
+{
+	var rid = $("#"+row_id).attr("rid");
+	var did = $("#hidden").attr("did");
+	var dtype = $("#hidden").attr("dtype");
+	var add_row_uri = "/dashboard/add_row_graphic";
+	var post =  {"rowid":rid, "did":did, "dtype":dtype};
+	load_ajax_data(add_row_uri, post, function(jsondata){
+		var obj = from_json(jsondata);
+		var gid_from_ajax = obj.gid;
+		add_panel(row_id, size, panel_id, gid_from_ajax);
+	});
+}
+
+function add_row(con_selector, row_id, row_class, row_id_from_ajax)
+{
+	var row_class = "dashrow";
+	var btn_panel_add = "btn-panel-add";
+	var row_html = '\n\
+			<div id="#row_id#" rid="#row_id_from_ajax#" class="row #row_class#">\n\
+				<div class="row_editor"> \n\
+						<div class="btn-group my-btn-row-editor"> \n\
+							<button type="button" class="btn btn-albert-drop btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">\n\
+								<i class="fa fa-angle-down"></i>\n\
+							</button>\n\
+							<ul class="dropdown-menu pull-left" role="menu">\n\
+								<li> \n\
+									<a class="#btn_panel_add#" href="#">Add Panel</a> \n\
+								</li> \n\
+								<li> \n\
+									<a href="#">View</a> \n\
+								</li> \n\
+								<li class="divider"> \n\
+								</li> \n\
+								<li> \n\
+									<a href="#">Delete</a> \n\
+								</li> \n\
+							</ul> \n\
+						</div> \n\
+					\n\
+				</div> \n\
+				<div class="container-fluid"> \n\
+					<div class="row connectedSortableRow"></div> \n\
+				</div> \n\
+			</div>\n';
+	row_html = row_html.replace(new RegExp(/#row_id#/g), row_id);
+	row_html = row_html.replace(new RegExp(/#row_id_from_ajax#/g), row_id_from_ajax);
+	row_html = row_html.replace(new RegExp(/#row_class#/g), row_class);
+	row_html = row_html.replace(new RegExp(/#btn_panel_add#/g), btn_panel_add);
+	$(row_html).appendTo(con_selector);
+	//$(con_selector).append(row_html);
+	//$("#"+row_id).draggable();
+	$("#"+row_id + " div.container-fluid div.row").sortable({
+		connectWith: ".connectedSortableRow",
+		cursor: 'move',
+		//delay: 200
+		forcePlaceholderSize: true,
+		handle: ".portlet-header",
+	    cancel: ".portlet-toggle,.portlet-content" ,
+		//revert: 100,
+		placeholder: "ui-state-highlight"
+	});
+	//$("#"+row_id ).disableSelection();
+	bind_add_panel("#"+row_id+ " a."+btn_panel_add);
+}
+
+function add_panel(row_id, size, panel_id, gid_from_ajax)
+{
+	var panel_class = "row_panel";
+	var html = '\n\<div id="#panel_id#" gid="#gid_from_ajax#" class="col-md-#size# #panel_class# portlet " size="#size#">\n\
+			\n\
+		    <div class="portlet-header">\n\
+	    		<div>\n\
+					<div class="page-toolbar"> \n\
+						<div class="btn-group pull-right"> \n\
+							<button type="button" class="btn btn-panel btn-fit-height grey-salt dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true">\n\
+							Actions <i class="fa fa-angle-down"></i>\n\
+							</button>\n\
+							<ul class="dropdown-menu pull-right" role="menu">\n\
+								<li> \n\
+									<a class="edit" gid="#gid_from_ajax#">Edit</a> \n\
+								</li> \n\
+								<li> \n\
+									<a class="view" gid="#gid_from_ajax#">View</a> \n\
+								</li> \n\
+								<li class="divider"> \n\
+								</li> \n\
+								<li> \n\
+									<a href="#" class="delete" gid="#gid_from_ajax#">Delete</a> \n\
+								</li> \n\
+							</ul> \n\
+						</div> \n\
+					</div> \n\
+				</div>\n\
+	    	</div>\n\
+    		\n\
+		    <div class="portlet-content"> \n\
+	    		<div class="hchart"></div> \n\
+			</div>\n\
+	</div> \n';
+	html = html.replace(new RegExp(/#size#/g), size);
+	html = html.replace(new RegExp(/#gid_from_ajax#/g), gid_from_ajax);
+	html = html.replace(new RegExp(/#panel_id#/g), panel_id).replace(new RegExp(/#panel_class#/g), panel_class);
+	//html = html.replace(new RegExp(/#name#/g), name);
+	//$(row_selector).append(html);
+	//$("#"+panel_id).draggable();
+
+	$("#"+row_id+" div.container-fluid div.row").append(html);
+	var setting = {
+			"sub_title": panel_id,
+			"ytext": "",
+			"min":0,
+			"max":100,
+			"height": 300,
+			"theme": "darkgreen"
+	};
+	xdatetime_area_line("div#"+panel_id+ " div.hchart", null, setting, "%m-%d", 15);
+
+
+	$("div#"+panel_id+ " ul li a.delete").on("click", function(){
+		var url = "/dashboard/delete_graphic";
+		var gid = $(this).attr("gid");
+		var post = {"gid": gid};
+		if(confirm("Confirm to delete this graphic?")){
+			load_ajax_data(url, post, function(jsondata){
+				var obj = from_json(jsondata);
+				var ret = obj.ret;
+				if(ret > 0){
+					$("#"+row_id+" div.container-fluid div.row div#"+panel_id).remove();
+				}
+			});
+		}
+	});
+
+	$("div#"+panel_id+ " ul li a.edit").on("click", function(){
+		var rid = $("#"+row_id).attr("rid");
+		var gid = $(this).attr("gid");
+		var url = "/dashboard/edit_graphic";
+		var did = $("#hidden").attr("did");
+		var dtype = $("#hidden").attr("dtype");
+
+		location.href = url+"?rid="+ rid +"&gid="+gid+"&dtype="+dtype+"&did="+did;
+
+	});
+
+	$("div#"+panel_id+ " ul li a.view").on("click", function(){
+		var gid = $(this).attr("gid");
+		var url = "/dashboard/view_graphic";
+		var did = $("#hidden").attr("did");
+		var dtype = $("#hidden").attr("dtype");
+		location.href = url+"?gid="+gid+"&dtype="+dtype+"&did="+did;
+	});
+
+	//$("#"+panel_id).sortable({
+		//placeholder: "ui-state-highlight",
+		//handle: ".portlet-header",
+	    //cancel: ".portlet-toggle"
+	//});
+	//$("#"+panel_id ).disableSelection();
+
+}
+
+function bind_add_panel(selector)
+{
+	//btn-panel-add
+	//alert(selector);
+	$("a.btn-panel-add").each(function(){
+		var $btn = $(this);
+		$btn.unbind("click");
+		$btn.on("click",function(){
+			var $dashrow = $btn.parents(".dashrow");
+			var row_id = $dashrow.attr("id");
+			//var panel_id = "panel_" + Math.round(new Date().getTime()/1000);
+			var panel_id = Math.round(new Date().getTime()/1000);
+			post_add_graphic(row_id, 6, panel_id);
+
+		});
+	});
+}
+
+$(document).ready(function(){
+	$("#dashboard").sortable({
+		placeholder: "ui-state-highlight",
+		forcePlaceholderSize: true,
+		cancel: ".portlet-toggle,.portlet-content" ,
+		grid: [ 20, 10 ],
+		cursor: 'move'
+		//revert: 300
+		//scroll: false
+		//opacity: 0.8
+		//axis: 'y'
+	});
+
+	$("button.btn-add-row:first").click(function(){
+		//var row_id = "row_"+get_datetime_str();
+		var row_id = Math.round(new Date().getTime()/1000); //时间戳
+		post_add_row("#dashboard", row_id, "dashrow");
+	});
+
+
+	/*
+	add_row("#dashboard", "12223", "dashrow");
+	add_row("#dashboard", "345safasd", "dashrow");
+
+	add_panel("#12223", 8, "pnl_a", "" );
+	var setting = {
+			"title": "first_row_title",
+			"sub_title": "subtitle",
+			"ytext": "",
+			"min":0,
+			"max":100,
+			"height": 200,
+			"theme": "darkgreen"
+	};
+	xdatetime_line("div#pnl_a " + "div.hchart", null, setting, "%m-%d", 15);
+
+
+	add_panel("#345safasd", 3, "pnl_ab", "" );
+	var setting = {
+			"title": "title",
+			"sub_title": "subtitle",
+			"ytext": "",
+			"min":0,
+			"max":100,
+			"height": 200,
+			"theme": "darkgreen"
+	};
+	xdatetime_line("div#pnl_ab " + "div.hchart", null, setting, "%m-%d", 15);
+
+	add_panel("#345safasd", 5, "pnl_ab_2", "" );
+	var setting = {
+			"title": "title-2",
+			"sub_title": "subtitle-2",
+			"ytext": "",
+			"min":0,
+			"max":100,
+			"height": 200,
+			"theme": "darkgreen"
+	};
+	xdatetime_line("div#pnl_ab_2 " + "div.hchart", null, setting, "%m-%d", 15);
+	*/
+});
+</script>

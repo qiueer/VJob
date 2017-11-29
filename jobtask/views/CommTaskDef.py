@@ -128,3 +128,64 @@ class ListView(generic.ListView):
             for v in vs: # 有相同的参数
                 context[k] = v
         return context
+    
+    
+class ListTask(generic.ListView):
+    model = models.Comm_Task_Def
+    template_name = 'jobtask/comm_task_def/listtask.html'  
+    context_object_name = 'dataset'  
+    paginate_by = 6 #加上这句就自动开启了分页功能
+    allow_empty_first_page = True
+    
+    class Meta:
+        ordering = ['-id']
+
+    def get_querystr_without_page(self):
+        query_string_all =  self.request.META.get("QUERY_STRING")
+        querystr_widthout_page = re.sub(r"page=\d+", "", query_string_all)
+        if querystr_widthout_page.startswith("&") or querystr_widthout_page.endswith("&"):
+            querystr_widthout_page = querystr_widthout_page.strip("&")
+        return querystr_widthout_page
+    
+    def get_queryset(self):  
+        #cid = self.kwargs.get('cid','')  
+        #articles_list = models.Task_Def.objects.filter(category=cid).order_by('-view_times').defer('text')  
+        #taskdef_list = models.Task_Def.objects.all()
+        fieldmap = {
+            "task_status": "task_status",
+            "task_type": "task_type",
+            "task_perm": "task_perm_status",
+            "file_type": "file_type",
+        }
+        querydict = self.request.GET
+        condition = {}
+        for (k,vs) in dict(querydict).items():
+            if k in fieldmap:
+                new_k = fieldmap[k]
+                if vs[0]: condition[new_k] = vs[0]
+        
+        ## 这里判断是否是个人的常规任务
+        user_open = self.kwargs.get("user-open", False)
+        if user_open == True:
+            condition["create_user"] = self.request.user.username
+            
+        tasks = querydict.get("tasks", None)
+        if tasks:
+            taskids = [int(tid) for tid in str(tasks).strip("|").split("|")]
+            dataset = self.model.objects.filter(**condition).exclude(id__in=taskids).order_by("-id")
+            print dataset
+            return dataset  
+        dataset = self.model.objects.filter(**condition).order_by("-id")
+        return dataset  
+  
+    def get_context_data(self,**kwargs):  
+        context  = super(ListTask,self).get_context_data(**kwargs)
+        context["title"] = u"任务列表"
+        context["querystr"] = ""  #self.get_querystr_without_page()
+        context["pagesize"] = self.paginate_by
+        getmap = self.request.GET
+        for (k,vs) in dict(getmap).items():
+            if k == "page": continue  #排除分页参数
+            for v in vs: # 有相同的参数
+                context[k] = v
+        return context

@@ -1,0 +1,165 @@
+﻿<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jQuery表单步骤流程导航</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+
+<link rel="stylesheet" href="css/qstep.css">
+
+<script type="text/javascript">
+function one() {
+	if (confirm("确定提交？")) {
+		$("#one").hide();
+		$("#two").show();
+		$("#grxx").attr("class","current_prev");
+		$("#zjxx").attr("class","current");
+	}
+}
+
+function two() {
+	if (confirm("确定提交？")) {
+		$("#two").hide();
+		$("#three").show();
+
+		$("#grxx").attr("class","done");
+		$("#zjxx").attr("class","current_prev");
+		$("#qzxx").attr("class","current");
+	}
+}
+
+function three() {
+	if (confirm("确定提交？")) {
+		$("#three").hide();
+		$("#four").show();
+
+		$("#grxx").attr("class","done");
+		$("#zjxx").attr("class","done");
+		$("#qzxx").attr("class","current_prev");
+		$("#qzfs").attr("class","current");
+	}
+}
+
+function reone() {
+	if (confirm("确定返回？")) {
+		$("#one").show();
+		$("#two").hide();
+		$("#grxx").attr("class","current");
+		$("#zjxx").attr("class","");
+	}
+}
+function retwo() {
+	if (confirm("确定返回？")) {
+		$("#three").hide();
+		$("#two").show();
+		$("#grxx").attr("class","current_prev");
+		$("#zjxx").attr("class","current");
+		$("#qzxx").attr("class","");
+	}
+}
+function rethree() {
+	if (confirm("确定返回？")) {
+		$("#four").hide();
+		$("#three").show();
+		$("#grxx").attr("class","done");
+		$("#zjxx").attr("class","current_prev");
+		$("#qzxx").attr("class","current");
+		$("#qzfs").attr("class","last");
+	}
+}
+</script>
+
+
+</head>
+<body>
+
+<div class="formbox">
+	<div class="flow_steps">
+		<ul>
+			<li id="grxx" class="current">个人信息</li>
+			<li id="zjxx" >证件信息</li>
+			<li id="qzxx">签注信息</li>
+			<li id="qzfs" class="last">取证方式</li>
+		</ul>
+	</div>
+	<div class="formcon">
+		<div id="one">
+			<table align="center">
+				<tr>
+					<td align="right" width="140px">户口所在地：</td>
+					<td><input class="pwdTrigger" type="text"	placeholder="请输入户口所在地" /></td>
+				</tr>
+				<tr>
+					<td align="right">中文姓：</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入中文姓" /></td>
+				</tr>
+				<tr>
+					<td align="right">中文名：</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入中文名" /></td>
+				</tr>
+				<tr>
+					<td align="right">身份证号：</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入身份证号码" /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><button type="button" onclick="one()">提交</button></td>
+				</tr>
+			</table>
+		</div>
+		<div id="two" style="display:none">
+			<table align="center">
+				<tr>
+					<td align="right" width="140px">通行证号</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入证件号码" /></td>
+				</tr>
+				<tr>
+					<td align="right">有效日期至</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入证件号码" /></td>
+				</tr>
+				<tr>
+					<td align="right">联系电话</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输联系电话，建议是手机号码" /></td>
+				</tr>
+				<tr>
+					<td></td> 
+					<td><button type="button" onclick="two()">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="reone()">上一步</button></td>
+				</tr>
+			</table>
+		</div>
+		<div id="three" style="display:none">
+			<table align="center">
+				<tr>
+					<td align="right" width="140px">签注类别</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入签注类别" /></td>
+				</tr>
+				<tr>
+					<td align="right">前往地</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入前往地" /></td>
+				</tr>
+				<tr>
+					<td align="right">签证种类</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入签注种类" /></td>
+				</tr>
+				<tr>
+					<td></td> 
+					<td><button type="button" onclick="three()">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="retwo()">上一步</button></td>
+				</tr>
+			</table>
+		</div>
+		<div id="four" style="display:none">
+			<table align="center">
+				<tr>
+					<td align="right" width="140px">取证方式</td>
+					<td><input class="pwdTrigger" type="text" placeholder="请输入取证方式" /></td>
+				</tr>
+				<tr>
+					<td></td> 
+					<td><button type="button" onclick="">提交</button>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="rethree()">上一步</button></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+<div style="text-align:center;clear:both">
+</div>
+</body>
+</html>

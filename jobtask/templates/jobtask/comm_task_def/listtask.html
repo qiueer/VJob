@@ -1,0 +1,89 @@
+
+{% load pagetags %}
+
+<style>
+div.block {
+padding: 8px;
+margin: 4px 0;
+}
+div.header-menu{
+	float: right;
+}
+.block-placeholder {
+    border: 1px dotted black;
+}
+span.open-close {
+padding: 2px;
+cursor: pointer;
+font-weight: bold;
+font-size: 14px;
+}
+</style>
+<div class="container-fluid">
+
+	<div class="row page-row" style="padding: 0px; margin: 0px;">
+		<div class="col-md-12"  style="padding: 0px; margin: 0px;">
+			<div class="pageinfo" pagesize="{{ pagesize }}"></div>
+			<div>
+				{% if is_paginated %}  
+		        <div class="panel-default"  style="align: right">
+	                <ul class="pagination" style="margin: 2px; display: block;">
+	                    <li><a data-url="{{ request.path }}?page=1&{{ querystr }}">&laquo;</a></li>
+						{% if page_obj.has_previous %}
+	                        <li><a data-url="{{ request.path }}?&page={{ page_obj.previous_page_number }}&{{ querystr }}">上一页</a></li>
+	                    {% else %}
+	                        <li class="previous disabled"><a>上一页</a></li>
+	                    {% endif %}
+	                    {% for i in page_obj|page_range:8 %}
+	                        <li {% if page_obj.number == i %}class="active"{% endif %}><a data-url="{{ request.path }}?page={{ i }}&{{ querystr }}">{{ i }}</a></li>
+	                    {% endfor %}
+	                    {% if page_obj.has_next %}
+	                        <li><a data-url="{{ request.path }}?page={{ page_obj.next_page_number }}&{{ querystr }}">下一页</a></li>
+	                    {% else %}
+	                        <li class="previous disabled"><a>下一页</a></li>
+	                    {% endif %}
+	                    <li><a data-url="{{ request.path }}?page={{ page_obj.paginator.num_pages }}&{{ querystr }}">&raquo;</a></li>
+	                </ul>
+	        </div>
+			 {%endif%}
+			 <div  style="float: right"><a data-url="{{ request.path }}?" class="btn btn-info btn-reset" href="#">Reset</a></div>
+			 
+		  </div>
+			 
+		</div>
+	</div>
+
+	<div class="row datatable-row src-task">
+
+	{% if dataset %}  
+	    {%for rec in dataset %} 
+	    <div class="col-md-12">
+				    <div class="block bg-info">
+				    		<div class="block-header">
+				    			任务: {{ rec.func}}->{{rec.task.func}}
+				    			<div class="header-menu"><span class="open-close" taskid="{{ rec.id }}">+</span></div>
+				    		</div>
+				            <div class="block-content" style="display:none">
+					            <div class="detail-info" >
+					            	<ul>
+						            	<li>任务: {{ rec.task.func}}</li>
+							            <li>IP:{{ rec.iphosts}}</li>
+							            <li>参数: {{ rec.params}}</li>
+							            <li>执行用户: {{ rec.exe_user}}</li>
+							            <li>超时时间: {{ rec.timeout}}</li>
+							            <li>功能: {{ rec.func}}</li>
+							            <li>创建时间: {{ rec.create_dt}}</li>
+							            <li>备注: {{ rec.note}}</li>
+						            </ul>
+					            </div>
+				            </div>
+				    </div>
+	    </div>
+	    {% endfor%}  
+	{% else %}  
+	{% endif %}  
+
+	</div>
+	
+</div>
+

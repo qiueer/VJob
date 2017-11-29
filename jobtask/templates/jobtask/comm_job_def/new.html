@@ -8,35 +8,82 @@
 {{ title }}
 {% endblock %}
 
+
+
 {% block body%}
-	<div class="contain-fluid">
+
+<style>
+div.content {
+padding: 8px 0;
+border: 1px dashed #000;
+}
+div.datatable-row {
+min-height: 40px;
+}
+div.datatable-row2 {
+min-height: 40px;
+}
+div.row-right-part, div.row-left-part  {
+}
+div.page{
+padding: 0px 15px;
+}
+</style>
+
+	<div class="container-fluid">
 		<div class="row">
-			<div class="col-md-2"></div>
-			<div class="col-md-8">
+			<div class="col-md-12">
 				<div class="p-info-container">
 			         <div class="alert alert-danger p-info" style="display: none">
 			         </div>
 				</div>
 			</div>
-			<div class="col-md-2"></div>
 		</div>
 		
 		<div class="row">
-				<div class="col-md-2"></div>
-				<div class="col-md-8">
+				<div class="col-md-12">
 					<form class="form" action="{{ action }}" name="postform" method="post" enctype="multipart/form-data">
 					    {% csrf_token %}
-					    {{ form|bootstrap:6 }}
+					    {{ form|bootstrap:4 }}
 					</form>
 				</div>
-				<div class="col-md-2"></div>
+		</div>
+		
+		<div class="row" style="margin-bottom: 12px">
+				<div class="col-md-5 row-left-part">
+					<div>
+							<div style="display: inline-table;">候选任务</div>
+					</div>
+					<div class="content">
+						<div class="contanier-fluid">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="tasklist"></div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+				<div class="col-md-5 row-right-part">
+					作业任务编排
+					<div class="content">
+							<div class="container-fluid container-task">
+							<div class="row datatable-row dest-task">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-2">
+					&nbsp;<br>
+					<a class="btn btn-success  btn-add" action="add" href="#" style="width: 100%">Add</a>
+				</div>
 		</div>
 		
 		<div class="row">
 				<div class="col-md-2"></div>
 				<div class="col-md-4"></div>
 				<div class="col-md-4" style="text-align: right">
-					    <a class="btn btn-success btn-add" action="add" href="#">Add</a>
 				</div>
 				<div class="col-md-2"></div>
 		</div>
@@ -52,20 +99,76 @@
 	<link href="{% static 'plugins/select2-4.0.3/dist/css/select2.min.css' %}" rel="stylesheet">
 	<script src="{% static 'plugins/select2-4.0.3/dist/js/select2.min.js' %}"></script>
 	
+	<script src="{% static 'jquery/plugins/jquery.ui.min.js' %}"></script>
+	
 	<script>
-		var options = {
-				selector: "#id_iphosts",
-				url: "{% url 'jobtask:comm-iplist' %}",
-				disp_fd: "key",
-				val_fd: "value",
-				//value: "{{ object.iphosts }}",
-				//is_multiable: true,
-		};
-		load_data_for_select(options);
+	
+		function load(url){
+			var tasks = "";
+			$("div.container-task").find(".open-close").each(function(){
+				tasks += ""+$(this).attr("taskid")+"|";
+			});
+			if(tasks != ""){
+				url = $.trim(url)+"?"+"tasks="+tasks;
+				url = url.replace("&?","&").replace("??","?");
+			}
+			$.get(url, undefined , function(htmlContent){
+				$("div.tasklist").hide().html(htmlContent).fadeIn(500);
+				$("div.datatable-row").find("div.block-header span").each(function(){
+				 var $span = $(this);
+				 $span.unbind("click");
+				 $span.bind("click", function(){
+					var html = $span.html();
+					if(html == "-") {$span.html("+");}
+					if(html == "+") {$span.html("-");}
+					var $block = $span.parents("div.block");
+					$block.children("div.block-content").toggle();
+				 });
+				});
+				  
+				$("div.datatable-row").sortable({
+					connectWith: ".datatable-row",
+					cursor: 'move',
+					//delay: 200
+					forcePlaceholderSize: true,
+					handle: ".block-header",
+				    cancel: ".header-menu,.open-close" ,
+					//revert: 100,
+					placeholder: "ui-state-highlight",
+					receive: function(event,ui){
+						if($(this).hasClass("dest-task")){
+							//如果原任务列表为空，则刷新
+							if($("div.src-task").find("div.block").length == 0){
+								load($(".btn-reset:first").attr("data-url"));
+							}
+							return true;
+						}
+						if($(this).hasClass("src-task")){
+							var pagesize = $("div.pageinfo:first").attr("pagesize");
+							var cnt = $(this).find("div.block").length;
+							//如果原来任务数目比分页大，则刷新
+							if(cnt > pagesize){
+								load($(".btn-reset:first").attr("data-url"));
+							}
+						}
 
+					},
+				});
+				
+				$("div.page-row").find("a").each(function(){
+					if(typeof($(this).attr("data-url"))=="undefined") {return true;}
+					$(this).unbind("click");
+					$(this).on("click", function(){
+						load($(this).attr("data-url"));
+					});
+				});
+			  });
+		}
 		
+		load("{% url 'jobtask:my-comm-taskdef-list-task'%}");
+		
+
 		$(".select2").select2();
-		$("div.remote_file_field, div.file_field").removeClass("col-md-6").addClass("col-md-12").hide();
 		
 		$(".btn-add2").click(function(){
 			var a = $("select[name=iphosts]").val();
@@ -75,17 +178,30 @@
 	    $(".btn-add").click(function(){
 	    	var flag = confirm("确定新增吗?");
 	    	if(flag == false){return false;}
+			var tasks = "";
+			$("div.container-task").find(".open-close").each(function(){
+				tasks += ""+$(this).attr("taskid")+"|";
+			});
+			var data = {
+            	"job_status": $("select[name=job_status]").val(),
+            	"job_class": $("select[name=job_class]").val(),
+            	"func": $("textarea[name=func]").val(),
+            	"note": $("textarea[name=note]").val(),
+            	"tasks": tasks
+            }
+			console.info(data);
 	    	var form = $("form[name=postform]");  
             var options  = {      
                     url: form.attr("action"),
-                    type:'post',      
+                    type:'post',
+                    data: data,
                     success:function(data)      
                     {    //成功执行的方法  
                     	var errmsg = data["errmsg"];
                     	var field = data["field"];
                     	var verbose_name = data["verbose_name"];
-						if(errmsg){$("div.p-info").hide().html(""+verbose_name+":"+errmsg).show(400);}
-						else{var id=data["id"];$("div.p-info").hide().html("成功，ID: " + id).show(400);}
+						if(errmsg){$("div.p-info").hide().html(""+verbose_name+":"+errmsg).fadeIn(400);}
+						else{var id=data["id"];$("div.p-info").hide().html("成功，ID: " + id).fadeIn(400);}
                     }      
             };      
             form.ajaxSubmit(options);  

@@ -88,7 +88,7 @@ DATABASES = {
         'default':{
             "ENGINE":"django.db.backends.mysql",
             "HOST":"192.168.253.130",
-            "NAME": "dj_helloworld",
+            "NAME": "db_jobtask",
             "USER": "django",
             "PASSWORD": "dj123456",
             "PORT": 3306,

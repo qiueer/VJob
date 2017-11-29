@@ -45,6 +45,10 @@ class QBaseCreateView(LoginRequiredMixin, generic.CreateView):
                 break
         return HttpResponse(JsonResponse(respdata), content_type="application/json")  
 
+    def ret_err_msg(self, field, verbose_name, errmsg):
+        respdata = {"field": field, "verbose_name": verbose_name, "errmsg": errmsg}
+        return HttpResponse(JsonResponse(respdata), content_type="application/json")
+
     def form_valid(self, form):
         self.obj = obj = form.save(commit=False)
         obj.save()
@@ -74,6 +78,10 @@ class QBaseDetailView(LoginRequiredMixin, generic.UpdateView):
         for (k, v) in dict(kwargs):
             setattr(obj, k, v)
         return obj
+    
+    def ret_err_msg(self, field, verbose_name, errmsg):
+        respdata = {"field": field, "verbose_name": verbose_name, "errmsg": errmsg}
+        return HttpResponse(JsonResponse(respdata), content_type="application/json")
 
     def get_context_data(self, **kwargs):
         if None in [self.model, self.template_name, self.list_url, self.form_class]:

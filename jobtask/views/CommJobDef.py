@@ -7,6 +7,10 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import login_required  
 from django.views import View
 from django.views import generic
+from django.shortcuts import get_object_or_404, render_to_response
+
+from django.http import JsonResponse
+from django.http import HttpResponse
 
 from lib.base.sdate import sdate
 from .QBase import QBaseDetailView
@@ -15,12 +19,14 @@ from .QBase import QBaseCreateView
 from .. import forms
 from .. import models
 import re
+from jobtask.views import CommTaskDef
+from jobtask.views.CommJobDef2 import DetailView
 
 # Create your views here.
 
 class AddView(QBaseCreateView):
     model = models.Comm_Job_Def  ## 必填
-    form_class  =   forms.CommJobDefForm## 必填
+    form_class  =   forms.CommJobDefFormNew## 必填
     template_name = "jobtask/comm_job_def/new.html"  ## 必填
     title = u"创建新作业"
     
@@ -39,18 +45,33 @@ class AddView(QBaseCreateView):
         #print self.request.POST.getlist("comm_tasks")
         
         obj.save()
-        comm_tasks = form.cleaned_data["comm_tasks"]
-        for ct in comm_tasks:
-            obj.comm_tasks.add(ct)
-        return QBaseCreateView.form_valid(self, form)
+        #comm_tasks = form.cleaned_data["comm_tasks"]
+        tasks = self.request.POST.get("tasks", None)
+        if not tasks:
+            return self.ret_err_msg("tasks", "任务", "任务不能为空")
+        taskids = [int(tid) for tid in str(tasks).strip("|").split("|")]
 
+        #print tasks, taskids
+        for tid in taskids:
+            ct = models.Comm_Task_Def.objects.get(id=tid)
+            models.CommJobTaskConfig.objects.create(comm_job_id=obj.id, comm_task_id=ct.id)
+            #obj.comm_tasks.add(ct)
+        return QBaseCreateView.form_valid(self, form)
+    
 ##用于更新、删除，继承于UpdateView
 class DetailView(QBaseDetailView):
     model = models.Comm_Job_Def
     template_name = "jobtask/comm_job_def/detail.html" 
     list_url = reverse_lazy("jobtask:comm_jobdef-list") ## 必填
-    form_class  =  forms.CommJobDefForm  ## 必填
+    form_class  =  forms.CommJobDefFormNew  ## 必填
     title = u"作业定义详情"
+    
+    def get_context_data(self, **kwargs):
+        context = super(DetailView, self).get_context_data(**kwargs)
+        pk = self.kwargs.get("pk")
+        jt_config = models.CommJobTaskConfig.objects.filter(comm_job_id=pk)
+        context["jobtask_config"] = jt_config
+        return context
     
     ## form校验通过，修改前更新
     def form_valid(self, form):
@@ -61,16 +82,21 @@ class DetailView(QBaseDetailView):
         }
         for (k, v) in update_or_add_fds.iteritems():
             setattr(obj, k, v)
-        # select2
-        #obj.iphosts = ";".join(self.request.POST.getlist("iphosts",[]))
-        #return super(QBaseDetailView, self).form_valid(form)
-        
-        ## m2m field update
         obj.save()
-        comm_tasks = form.cleaned_data["comm_tasks"]
-        obj.comm_tasks.set(comm_tasks)
+        
+        tasks = self.request.POST.get("tasks", None)
+        if not tasks:
+            return self.ret_err_msg("tasks", "任务", "任务不能为空")
+        taskids = [int(tid) for tid in str(tasks).strip("|").split("|")]
+
+        models.CommJobTaskConfig.objects.filter(comm_job_id=obj.id).delete()
+            
+        for tid in taskids: ## 顺序新增
+            ct = models.Comm_Task_Def.objects.get(id=tid)
+            models.CommJobTaskConfig.objects.create(comm_job_id=obj.id, comm_task_id=ct.id)
+            #obj.comm_tasks.add(ct)
         return QBaseDetailView.form_valid(self, form)
-    
+
 class ListView(generic.ListView):
     model = models.Comm_Job_Def
     template_name = 'jobtask/comm_job_def/list.html'  
@@ -122,3 +148,7 @@ class ListView(generic.ListView):
             for v in vs: # 有相同的参数
                 context[k] = v
         return context
+
+class DetailViewForModal(generic.DetailView):
+    model = models.Comm_Job_Def
+    template_name = "jobtask/modal/comm_jobdef_detail.html" 

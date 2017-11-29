@@ -1,0 +1,68 @@
+{% load static %}
+<link href="{% static 'css/table.css' %}" rel="stylesheet">
+<link href="{% static 'jquery/plugins/treetable/css/jquery.treetable.css' %}" rel="stylesheet">
+<link href="{% static 'jquery/plugins/treetable/css/jquery.treetable.theme.default.css' %}" rel="stylesheet">
+<script src="{% static 'jquery/plugins/treetable/jquery.treetable.js' %}"></script>
+
+<style>
+table.treetable tbody tr  td {
+	 padding: 8px !important;
+}
+table.treetable tbody tr.header {
+	 background-color: #f0f9ff;
+	 font-size: 14px;
+	 font-weight: bold;
+	 border: 1px solid #888;
+}
+</style>
+
+<div class="container-fluid">
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="treetable" id="">
+					<tr class="header">
+						<td>作业功能</td>
+						<td>作业状态</td>
+						<td>作业创建时间</td>
+						<td>作业分类</td>
+					</tr>
+					<tr data-tt-id="2">
+						<td >{{ object.func }}</td>
+						<td>{{ object.job_status }}</td>
+						<td>{{ object.job_class }}</td>
+						<td>{{ object.task.create_dt }}</td>
+					</tr>
+					<tr data-tt-id="3" data-tt-parent-id="2" >
+						<td colspan="4" style="padding: 0 24px !important;">
+							<p>作业任务组成</p>
+							<table class="treetable">
+								<tr  class="header" data-tt-id="11">
+									<td>IP主机(s)</td>
+									<td>参数</td>
+									<td>执行用户</td>
+									<td>超时时间</td>
+									<td>常规任务功能</td>
+									<td>创建时间</td>
+								</tr>
+								{% for ct in object.comm_tasks.all %}
+								<tr data-tt-id='2{{ forloop.counter }}' data-tt-parent-id="11">
+									<td>{{ ct.iphosts }}</td>
+									<td>{{ ct.params }}</td>
+									<td>{{ ct.exe_user }}</td>
+									<td>{{ ct.timeout }}</td>
+									<td>{{ ct.func }}</td>
+									<td>{{ ct.create_dt }}</td>
+								</tr>
+				            	{% endfor %}
+				            </table>
+				        </td>
+					</tr>
+					
+				</table>
+			</div>
+	</div>
+
+
+</div>
+

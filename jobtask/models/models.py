@@ -136,7 +136,7 @@ class JobClass(models.Model):
     
 ## 常规作业表，已配置好
 class Comm_Job_Def(models.Model):
-    comm_tasks = models.ManyToManyField(Comm_Task_Def, verbose_name="任务列表")
+    comm_tasks = models.ManyToManyField(Comm_Task_Def, verbose_name="任务列表", through="CommJobTaskConfig", through_fields=("comm_job", "comm_task"))
     job_status = models.ForeignKey(JobStatus, default=None, verbose_name="作业状态")  # 0：停用；1：启用
     jobtype = models.IntegerField(default=2, verbose_name="任务类型")  # 取值[1,2], 1后台自动生成，2从前端配置生成
     job_class = models.ForeignKey(JobClass, default=None, verbose_name="作业分类")  # 0：独有不公开  1：所有人可读
@@ -148,6 +148,14 @@ class Comm_Job_Def(models.Model):
     
     class Meta(object):
         db_table = "comm_job_def"
+        
+class CommJobTaskConfig(models.Model):
+    comm_job = models.ForeignKey(Comm_Job_Def, on_delete=models.CASCADE)
+    comm_task = models.ForeignKey(Comm_Task_Def, on_delete=models.CASCADE)
+    create_dt = models.DateTimeField(auto_now_add=True)
+    
+    class Meta(object):
+        db_table = "comm_job_task_config"
         
 # 创建作业
 # 创建任务

@@ -99,8 +99,8 @@
 				            <td>{{ rec.create_dt}}</td>
 				            <td>{{ rec.note}}</td>  
 				            <td>
-				            	<a class="btn btn-info" title="查看、编辑(id: {{rec.id}})详细信息" href="{% url "jobtask:comm_jobdef-detail" rec.id %}">编辑</a>
-				            	<a class="btn btn-info" title="发起作业(id: {{rec.id}})" data-url="{% url 'jobtask:job-new' rec.id %}" data-toggle="modal" data-target="#runjob"  href="#">Run</a>
+				            	<a class="btn btn-info" title="查看、编辑(id: {{rec.id}})详细信息" href="{% url 'jobtask:comm_jobdef-detail' rec.id %}">编辑</a>
+				            	<a class="btn btn-info" title="查看作业详细信息" href="#" data-toggle="modal" data-target="#commjob-modal" data-commjob="{{ rec.id }}" data-url="{% url 'jobtask:comm_jobdef-detail_for_modal' rec.id %}" data-run_url="{% url 'jobtask:job-new' rec.id %}">发起作业</a>
 				            </td>
 				        </tr>  
 				    {% endfor%}  
@@ -119,14 +119,11 @@
 		        <div class="panel-default"  style="align: right">
 	                <ul class="pagination">
 	                    <li><a href="{{ request.path }}?page=1&{{ querystr }}">&laquo;</a></li>
-	                    {% if page_obj.has_previous %}
+						{% if page_obj.has_previous %}
 	                        <li><a href="{{ request.path }}?&page={{ page_obj.previous_page_number }}&{{ querystr }}">上一页</a></li>
 	                    {% else %}
 	                        <li class="previous disabled"><a>上一页</a></li>
 	                    {% endif %}
-<!-- 	                    {% for i in page_obj.paginator.page_range %}
-	                        <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&{{ querystr }}">{{ i }}</a></li>
-	                    {% endfor %} -->
 	                    {% for i in page_obj|page_range:8 %}
 	                        <li {% if page_obj.number == i %}class="active"{% endif %}><a href="{{ request.path }}?page={{ i }}&{{ querystr }}">{{ i }}</a></li>
 	                    {% endfor %}
@@ -168,7 +165,29 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div id="runjob" class="modal fade  " tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+<div id="commjob-modal" class="modal fade  " tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">作业信息确认</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+          	<div class="content"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-info" id="btn_run_comm_job">确定</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="run-job-modal" class="modal fade  " tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -192,7 +211,6 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
 {% endblock %}
 
 {% block js_extend %}
@@ -207,7 +225,7 @@
 	<script>
 	$(function(){
 
-		$("#commtask_modal,#runjob").draggable({   
+		$("#commtask_modal,#commjob-modal,#run-job-modal").draggable({   
 		    handle: ".modal-header",   
 		    cursor: 'move',   
 		    refreshPositions: false  
@@ -222,10 +240,44 @@
 				  modal.find('.modal-body div.content').html(htmlContent);
 				  //modal.modal('toggle');  // 触发弹出
 				});
-			  //modal.find('.modal-body input').val(recipient)
+
+			});
+		
+		$('#commjob-modal').on('show.bs.modal', function (event) {
+			  var button = $(event.relatedTarget); // Button that triggered the modal
+			  var jid = button.data('commjob'); // Extract info from data-* attributes
+			  var url = button.data("url");
+			  var run_url = button.data("run_url")
+			  var modal = $(this);
+			  $.get(url, undefined , function(htmlContent){
+				  modal.find('.modal-body div.content').html(htmlContent);
+				  $("table.treetable").treetable({expandable: true,column:0,initialState :"expanded"});
+				});
+			  
+			  $('#btn_run_comm_job').unbind("click"); //避免多次绑定
+			  $("#btn_run_comm_job").on("click",function(){
+				  if(false == confirm("确认要发起作业吗？")) {return false;}
+		    	  $('#commjob-modal').modal("hide");
+				  var modal = $('#run-job-modal');
+				  $.post(run_url, undefined , function(jsonobj){
+					  modal.modal("show");
+					  var jobid = jsonobj.jobid;
+					  var msg = jsonobj.msg;
+					  var code = jsonobj.code;
+					  var url = jsonobj.url;
+					  if(code==0){
+					  	modal.find('.modal-body div.content a').text(jobid).show();
+					  	modal.find('.modal-body div.content a').attr("href", url);
+					  }else{
+						modal.find('.modal-body div.content').hide();
+						modal.find('.modal-body div.errmsg').html(msg);
+					  }
+					});
+			 	});
+			  
 			});
 			
-		$('#runjob').on('show.bs.modal', function (event) {
+		$('#run-job-modal').on('show.bs.modal', function (event) {
 			  var button = $(event.relatedTarget); // Button that triggered the modal
 			  var url = button.data("url");
 			  var modal = $(this);
